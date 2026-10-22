@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - Mathew's SmartStudy Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Water Background Header -->
+  <div class="water-bg-wrapper">
+    <header>
+      <div class="logo-area">
+        <span class="logo-badge">Fepmaxy Zm($#1 D)</span>
+        <h1>Admin Portal</h1>
+      </div>
+      <nav class="grade-tabs">
+        <a href="index.html" class="grade-tab">Student Library</a>
+        <a href="admin.html" class="grade-tab active">Admin Portal</a>
+        <button id="headerAdminLogoutBtn" class="header-logout-btn" style="display: none;">Logout</button>
+      </nav>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Login Section -->
+    <section id="loginSection" class="admin-box" style="max-width: 450px; margin: 3rem auto;">
+      <h2 style="margin-bottom: 1.5rem; color: #0f172a;">Admin Login</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Enter Admin Password:</label>
+          <div class="password-wrapper">
+            <input type="password" id="adminPasswordInput" placeholder="Enter password..." required>
+            <button type="button" id="toggleLoginPassword" class="toggle-password">👁️</button>
+          </div>
+        </div>
+        <button type="submit" class="primary-btn" style="width: 100%;">Login to Dashboard</button>
+      </form>
+      <div class="auth-links">
+        <a id="forgotPasswordBtn">Forgot Password?</a>
+      </div>
+      <p id="loginError" style="color: #ef4444; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center;">Incorrect password. Try again.</p>
+    </section>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" style="display: none;">
+      <!-- Upload Form with Local File Picker -->
+      <section class="admin-box">
+        <h3 style="margin-bottom: 1.2rem; color: #0f172a;">Upload Material from Local PC Files</h3>
+        <form id="uploadForm">
+          <div class="form-group">
+            <label>Resource Title:</label>
+            <input type="text" id="titleInput" placeholder="e.g. Grade 12 Biology Past Paper 2025" required>
+          </div>
+
+          <div class="form-group">
+            <label>Education Level / Grade:</label>
+            <select id="levelInput">
+              <option value="senior">Grade 12 (Senior Secondary)</option>
+              <option value="junior">Grade 9 (Junior Secondary)</option>
+              <option value="primary">Grade 7 (Primary)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Subject Name:</label>
+            <input type="text" id="subjectInput" placeholder="e.g. Biology, Mathematics, Physics" required>
+          </div>
+
+          <div class="form-group">
+            <label>Select PDF File from PC:</label>
+            <input type="file" id="pdfFileInput" accept="application/pdf" required style="padding: 0.5rem; background: #f8fafc;">
+            <small style="color: #64748b; display: block; margin-top: 0.3rem;">Choose any PDF file from your local computer files on this PC.</small>
+          </div>
+
+          <button type="submit" class="primary-btn">Upload & Save Resource</button>
+        </form>
+      </section>
+
+      <!-- Change Password Box -->
+      <section class="admin-box">
+        <h3 style="margin-bottom: 1.2rem; color: #0f172a;">Change Admin Password</h3>
+        <form id="changePasswordForm">
+          <div class="form-group">
+            <label>Current Password:</label>
+            <div class="password-wrapper">
+              <input type="password" id="currentPassInput" required>
+              <button type="button" class="toggle-password toggle-pass-field">👁️</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>New Password:</label>
+            <div class="password-wrapper">
+              <input type="password" id="newPassInput" required>
+              <button type="button" class="toggle-password toggle-pass-field">👁️</button>
+            </div>
+          </div>
+          <button type="submit" class="primary-btn">Update Password</button>
+        </form>
+      </section>
+
+      <h3 style="margin-bottom: 1rem; color: #0f172a;">Uploaded Library Resources</h3>
+      <div id="adminResourceList"></div>
+    </div>
+
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
