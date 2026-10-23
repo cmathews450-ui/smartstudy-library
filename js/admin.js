@@ -1,42 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Initialize Default Main Admin Account
-  let admins = JSON.parse(localStorage.getItem("registered_admins")) || [
-    { username: "admin", password: "admin123", name: "Main Administrator" }
-  ];
-  localStorage.setItem("registered_admins", JSON.stringify(admins));
+  if (!localStorage.getItem("registered_admins")) {
+    const admins = [{ username: "admin", password: "admin123", name: "Main Administrator" }];
+    localStorage.setItem("registered_admins", JSON.stringify(admins));
+  }
 
-  // UI Tabs (Sign In vs Register)
+  // Auth Tabs
   const tabLoginBtn = document.getElementById("tabLoginBtn");
   const tabRegisterBtn = document.getElementById("tabRegisterBtn");
   const loginFormContainer = document.getElementById("loginFormContainer");
   const registerFormContainer = document.getElementById("registerFormContainer");
 
-  tabLoginBtn?.addEventListener("click", () => {
-    tabLoginBtn.style.background = "#ea580c";
-    tabLoginBtn.style.color = "#ffffff";
-    tabRegisterBtn.style.background = "transparent";
-    tabRegisterBtn.style.color = "#475569";
-    loginFormContainer.style.display = "block";
-    registerFormContainer.style.display = "none";
-  });
+  if (tabLoginBtn && tabRegisterBtn) {
+    tabLoginBtn.addEventListener("click", () => {
+      tabLoginBtn.style.background = "#ea580c";
+      tabLoginBtn.style.color = "#ffffff";
+      tabRegisterBtn.style.background = "transparent";
+      tabRegisterBtn.style.color = "#475569";
+      if (loginFormContainer) loginFormContainer.style.display = "block";
+      if (registerFormContainer) registerFormContainer.style.display = "none";
+    });
 
-  tabRegisterBtn?.addEventListener("click", () => {
-    tabRegisterBtn.style.background = "#10b981";
-    tabRegisterBtn.style.color = "#ffffff";
-    tabLoginBtn.style.background = "transparent";
-    tabLoginBtn.style.color = "#475569";
-    registerFormContainer.style.display = "block";
-    loginFormContainer.style.display = "none";
-  });
+    tabRegisterBtn.addEventListener("click", () => {
+      tabRegisterBtn.style.background = "#10b981";
+      tabRegisterBtn.style.color = "#ffffff";
+      tabLoginBtn.style.background = "transparent";
+      tabLoginBtn.style.color = "#475569";
+      if (registerFormContainer) registerFormContainer.style.display = "block";
+      if (loginFormContainer) loginFormContainer.style.display = "none";
+    });
+  }
 
-  // Toggle Password View
+  // Toggle Password Visibility
   document.getElementById("toggleAdminPass")?.addEventListener("click", function() {
     const p = document.getElementById("adminPasswordInput");
-    p.type = p.type === "password" ? "text" : "password";
-    this.textContent = p.type === "password" ? "👁️" : "🙈";
+    if (p) {
+      p.type = p.type === "password" ? "text" : "password";
+      this.textContent = p.type === "password" ? "👁️" : "🙈";
+    }
   });
 
-  // Admin Login Form
+  // Admin Login
   document.getElementById("adminLoginForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const user = document.getElementById("adminLoginUsername").value.trim().toLowerCase();
@@ -50,12 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.setItem("active_admin", JSON.stringify(matchedAdmin));
       showAdminDashboard();
     } else {
-      errorMsg.textContent = "Invalid Admin Username or Password.";
-      errorMsg.style.display = "block";
+      if (errorMsg) {
+        errorMsg.textContent = "Invalid Admin Username or Password.";
+        errorMsg.style.display = "block";
+      }
     }
   });
 
-  // Admin Registration Form
+  // Admin Registration
   document.getElementById("adminRegisterForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const name = document.getElementById("regAdminName").value.trim();
@@ -64,45 +70,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
     if (savedAdmins.some(a => a.username.toLowerCase() === user.toLowerCase())) {
-      alert("An admin account with this username already exists!");
+      alert("An admin with this username already exists!");
       return;
     }
 
-    const newAdmin = { username: user, password: pass, name: name };
-    savedAdmins.push(newAdmin);
+    savedAdmins.push({ username: user, password: pass, name: name });
     localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
     alert(`Admin account created for ${name}! You can now sign in.`);
-    tabLoginBtn.click();
+    tabLoginBtn?.click();
   });
 
-  // Dashboard Navigation Tabs
+  // Top Section Switcher Buttons (Upload Files vs Manage Admins)
   const btnUpload = document.getElementById("btnSectionUpload");
   const btnAdmins = document.getElementById("btnSectionAdmins");
   const boxUpload = document.getElementById("sectionUploadBox");
   const boxAdmins = document.getElementById("sectionAdminsBox");
 
-  btnUpload?.addEventListener("click", () => {
-    btnUpload.style.background = "#ea580c";
-    btnAdmins.style.background = "#64748b";
-    boxUpload.style.display = "block";
-    boxAdmins.style.display = "none";
-  });
+  if (btnUpload && btnAdmins) {
+    btnUpload.addEventListener("click", (e) => {
+      e.preventDefault();
+      btnUpload.style.background = "#ea580c";
+      btnUpload.style.color = "#ffffff";
+      btnAdmins.style.background = "#64748b";
+      btnAdmins.style.color = "#ffffff";
+      if (boxUpload) boxUpload.style.display = "block";
+      if (boxAdmins) boxAdmins.style.display = "none";
+    });
 
-  btnAdmins?.addEventListener("click", () => {
-    btnAdmins.style.background = "#ea580c";
-    btnUpload.style.background = "#64748b";
-    boxAdmins.style.display = "block";
-    boxUpload.style.display = "none";
-    renderAdminAccounts();
-  });
+    btnAdmins.addEventListener("click", (e) => {
+      e.preventDefault();
+      btnAdmins.style.background = "#ea580c";
+      btnAdmins.style.color = "#ffffff";
+      btnUpload.style.background = "#64748b";
+      btnUpload.style.color = "#ffffff";
+      if (boxAdmins) boxAdmins.style.display = "block";
+      if (boxUpload) boxUpload.style.display = "none";
+      renderAdminAccounts();
+    });
+  }
 
-  // Admin Logout
+  // Logout
   document.getElementById("adminLogoutBtn")?.addEventListener("click", () => {
     sessionStorage.removeItem("active_admin");
     location.reload();
   });
 
-  // Change Password
+  // Password Change
   document.getElementById("changePasswordForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const newPass = document.getElementById("newAdminPasswordInput").value.trim();
@@ -123,13 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Clear Example Data Button
   document.getElementById("clearAllExamplesBtn")?.addEventListener("click", () => {
-    if (confirm("Are you sure you want to delete ALL example files? You can then upload your real files.")) {
+    if (confirm("Are you sure you want to delete ALL uploaded files? The library will be completely empty.")) {
       localStorage.setItem("library_resources", JSON.stringify([]));
       renderAdminResources();
     }
   });
 
-  // Check Session
+  // Auto-Check Active Login Session
   if (sessionStorage.getItem("active_admin")) {
     showAdminDashboard();
   }
@@ -139,23 +152,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function showAdminDashboard() {
   const activeAdmin = JSON.parse(sessionStorage.getItem("active_admin"));
-  document.getElementById("adminAuthSection").style.display = "none";
-  document.getElementById("adminDashboardSection").style.display = "block";
-  document.getElementById("activeAdminDisplay").textContent = activeAdmin.name || activeAdmin.username;
+  const authSec = document.getElementById("adminAuthSection");
+  const dashSec = document.getElementById("adminDashboardSection");
+  
+  if (authSec) authSec.style.display = "none";
+  if (dashSec) dashSec.style.display = "block";
+
+  const nameDisplay = document.getElementById("activeAdminDisplay");
+  if (nameDisplay && activeAdmin) {
+    nameDisplay.textContent = activeAdmin.name || activeAdmin.username;
+  }
+
   renderAdminResources();
 }
 
 function setupUploadHandler() {
-  document.getElementById("addResourceForm")?.addEventListener("submit", (e) => {
+  const uploadForm = document.getElementById("addResourceForm");
+  if (!uploadForm) return;
+
+  uploadForm.addEventListener("submit", (e) => {
     e.preventDefault();
+
     const title = document.getElementById("resTitle").value.trim();
     const level = document.getElementById("resLevel").value;
     const subject = document.getElementById("resSubject").value.trim();
     const year = document.getElementById("resYear").value.trim();
     const fileInput = document.getElementById("resLocalFile");
 
-    if (fileInput.files.length === 0) {
-      alert("Please select a file!");
+    if (!fileInput || fileInput.files.length === 0) {
+      alert("Please select a PDF file from your device!");
       return;
     }
 
@@ -177,7 +202,9 @@ function setupUploadHandler() {
 
       resources.unshift(newRes);
       localStorage.setItem("library_resources", JSON.stringify(resources));
-      alert(`Uploaded "${title}" successfully!`);
+      
+      uploadForm.reset();
+      alert(`Success! "${title}" has been uploaded to the live site.`);
       renderAdminResources();
     };
 
@@ -192,7 +219,7 @@ function renderAdminResources() {
   let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
 
   if (resources.length === 0) {
-    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center;'>No custom files in library. Upload your real files above!</p>";
+    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet. Fill out the form above to upload your first paper!</p>";
     return;
   }
 
@@ -202,7 +229,7 @@ function renderAdminResources() {
       <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
         <div>
           <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
-          <small style="color: #64748b;">Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
+          <small style="color: #64748b;">Level: ${res.level.toUpperCase()} | Subject: ${res.subject} | Year: ${res.year}</small>
         </div>
         <button onclick="deleteSingleResource(${res.id})" class="danger-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">Delete</button>
       </div>
@@ -212,7 +239,7 @@ function renderAdminResources() {
 }
 
 window.deleteSingleResource = function(id) {
-  if (confirm("Delete this file from website?")) {
+  if (confirm("Delete this file from your library?")) {
     let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
     resources = resources.filter(r => r.id !== id);
     localStorage.setItem("library_resources", JSON.stringify(resources));
