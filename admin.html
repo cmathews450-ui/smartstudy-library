@@ -28,7 +28,7 @@
       <!-- Log In Form (Default View) -->
       <div id="loginFormContainer">
         <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Log In</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.</p>
+        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.<br><small style="color:#0d9488;">Default: admin / admin123</small></p>
         
         <form id="adminLoginForm">
           <div class="form-group">
@@ -48,7 +48,7 @@
 
         <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
           <span>First time here? </span>
-          <button type="button" id="showRegisterBtn" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Register an account</button>
+          <button type="button" onclick="switchToRegister()" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Register an account</button>
         </div>
       </div>
 
@@ -75,7 +75,7 @@
 
         <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
           <span>Already registered? </span>
-          <button type="button" id="showLoginBtn" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Log In</button>
+          <button type="button" onclick="switchToLogin()" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Log In</button>
         </div>
       </div>
 
