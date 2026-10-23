@@ -20,21 +20,17 @@
     </div>
   </div>
 
-  <div class="container" style="max-width: 650px; margin: 2rem auto;">
+  <div class="container" style="max-width: 550px; margin: 3rem auto;">
 
-    <!-- Admin Authentication (Login & Register Tabs) -->
-    <section id="adminAuthSection" class="admin-box" style="text-align: center; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
-      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: #e2e8f0; padding: 0.3rem; border-radius: 10px;">
-        <button id="tabLoginBtn" class="primary-btn" style="flex: 1; padding: 0.6rem; background: #ea580c;">Sign In</button>
-        <button id="tabRegisterBtn" class="primary-btn" style="flex: 1; padding: 0.6rem; background: transparent; color: #475569;">Register New Admin</button>
-      </div>
-
-      <!-- Login Form -->
+    <!-- Admin Authentication Box -->
+    <section id="adminAuthSection" class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      
+      <!-- Login Form (Default View) -->
       <div id="loginFormContainer">
-        <h3 style="color: #0f172a; margin-bottom: 0.4rem;">Admin Sign In</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem;">Log in using your Admin Username/Password.</p>
+        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Sign In</h3>
+        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.</p>
         
-        <form id="adminLoginForm" style="text-align: left;">
+        <form id="adminLoginForm">
           <div class="form-group">
             <label>Username:</label>
             <input type="text" id="adminLoginUsername" placeholder="e.g. admin" required>
@@ -47,49 +43,53 @@
               <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
             </div>
           </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem;">Sign In to Portal</button>
+          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Sign In to Portal</button>
         </form>
+
+        <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
+          <span>First time here? </span>
+          <a id="showRegisterLink" style="color: #ea580c; font-weight: 600; cursor: pointer;">Register an account</a>
+        </div>
       </div>
 
-      <!-- Register Form -->
+      <!-- Register Form (Hidden until clicked) -->
       <div id="registerFormContainer" style="display: none;">
-        <h3 style="color: #0f172a; margin-bottom: 0.4rem;">Register Admin Account</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem;">Create a new recognized admin profile.</p>
+        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Register Admin Account</h3>
+        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Create your first-time admin credentials.</p>
         
-        <form id="adminRegisterForm" style="text-align: left;">
+        <form id="adminRegisterForm">
           <div class="form-group">
             <label>Full Name:</label>
             <input type="text" id="regAdminName" placeholder="e.g. Mathews Chanda" required>
           </div>
           <div class="form-group">
             <label>Admin Username:</label>
-            <input type="text" id="regAdminUsername" placeholder="Choose admin username" required>
+            <input type="text" id="regAdminUsername" placeholder="Choose username" required>
           </div>
           <div class="form-group">
             <label>Admin Password:</label>
             <input type="password" id="regAdminPassword" placeholder="Create password" required>
           </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #10b981; font-size: 1rem;">Create Admin Account</button>
+          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #10b981; font-size: 1rem; margin-top: 0.5rem;">Create Account</button>
         </form>
+
+        <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
+          <span>Already registered? </span>
+          <a id="showLoginLink" style="color: #ea580c; font-weight: 600; cursor: pointer;">Sign In</a>
+        </div>
       </div>
 
-      <p id="adminLoginError" style="color: #ef4444; font-size: 0.88rem; display: none; margin-top: 1rem;"></p>
+      <p id="adminLoginError" style="color: #ef4444; font-size: 0.88rem; display: none; margin-top: 1rem; text-align: center;"></p>
     </section>
 
     <!-- Admin Dashboard (Visible After Login) -->
     <section id="adminDashboardSection" class="admin-box" style="display: none; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2rem solid #f8fafc; padding-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
         <div>
           <h3 style="color: #0f172a;">Welcome, <span id="activeAdminDisplay" style="color: #ea580c;">Admin</span>!</h3>
-          <p style="color: #64748b; font-size: 0.82rem;">Manage uploads, files, and admin settings.</p>
+          <p style="color: #64748b; font-size: 0.82rem;">Manage local files and uploads.</p>
         </div>
         <button id="adminLogoutBtn" class="danger-btn" style="padding: 0.5rem 1rem;">Logout</button>
-      </div>
-
-      <!-- Quick Action Tabs -->
-      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
-        <button id="btnSectionUpload" class="primary-btn" style="flex: 1; padding: 0.5rem; background: #ea580c;">📁 Upload Files</button>
-        <button id="btnSectionAdmins" class="primary-btn" style="flex: 1; padding: 0.5rem; background: #64748b;">👥 Manage Admins</button>
       </div>
 
       <!-- Upload Section -->
@@ -98,7 +98,7 @@
         <form id="addResourceForm">
           <div class="form-group">
             <label>Resource Title:</label>
-            <input type="text" id="resTitle" placeholder="e.g. 2026 Mathematics Paper 1" required>
+            <input type="text" id="resTitle" placeholder="e.g. G12 Bemba paper 1 (2017)" required>
           </div>
           <div class="form-group">
             <label>Grade Level:</label>
@@ -111,42 +111,27 @@
           </div>
           <div class="form-group">
             <label>Subject:</label>
-            <input type="text" id="resSubject" placeholder="e.g. Mathematics, Chemistry, English" required>
+            <input type="text" id="resSubject" placeholder="e.g. BEMBA, MATHEMATICS" required>
           </div>
           <div class="form-group">
             <label>Year:</label>
-            <input type="text" id="resYear" value="2026" required>
+            <input type="text" id="resYear" value="2017" required>
           </div>
           <div class="form-group">
             <label>Select PDF File from Local Storage:</label>
             <input type="file" id="resLocalFile" accept=".pdf,.doc,.docx" required style="padding: 0.4rem; background: #f8fafc;">
           </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c; font-size: 1rem;">Upload to Live Website</button>
+          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Upload to Live Website</button>
         </form>
 
         <!-- Manage Uploaded Resources -->
         <div style="margin-top: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
             <h4 style="color: #1e293b;">Uploaded Library Files</h4>
-            <button id="clearAllExamplesBtn" class="danger-btn" style="padding: 0.35rem 0.7rem; font-size: 0.78rem;">Clear All Example Files</button>
+            <button id="clearAllExamplesBtn" class="danger-btn" style="padding: 0.35rem 0.7rem; font-size: 0.78rem;">Clear All Files</button>
           </div>
           <div id="adminResourceList" style="display: flex; flex-direction: column; gap: 0.6rem;"></div>
         </div>
-      </div>
-
-      <!-- Manage Admins Section -->
-      <div id="sectionAdminsBox" style="display: none;">
-        <h4 style="margin-bottom: 0.8rem; color: #1e293b;">Change My Password</h4>
-        <form id="changePasswordForm" style="margin-bottom: 2rem;">
-          <div class="form-group">
-            <label>New Password:</label>
-            <input type="password" id="newAdminPasswordInput" placeholder="Enter new password" required>
-          </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.65rem; background: #10b981;">Update Password</button>
-        </form>
-
-        <h4 style="margin-bottom: 0.8rem; color: #1e293b; border-top: 1px solid #e2e8f0; padding-top: 1rem;">Registered Admin Accounts</h4>
-        <div id="adminAccountsList" style="display: flex; flex-direction: column; gap: 0.6rem;"></div>
       </div>
 
     </section>
