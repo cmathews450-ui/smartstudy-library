@@ -2,6 +2,35 @@ let activeLevel = "all";
 let selectedSubject = "all";
 let selectedYear = "all";
 
+function openLibraryDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("SmartStudyLibraryDB", 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains("resources")) {
+        db.createObjectStore("resources", { keyPath: "id" });
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function getResourcesDB() {
+  return new Promise(async (resolve) => {
+    try {
+      const db = await openLibraryDB();
+      const tx = db.transaction("resources", "readonly");
+      const store = tx.objectStore("resources");
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => resolve([]);
+    } catch (e) {
+      resolve([]);
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   renderSubjectPills();
   renderResources();
@@ -10,11 +39,6 @@ window.addEventListener("DOMContentLoaded", () => {
     renderResources(this.value);
   });
 });
-
-function getResources() {
-  const stored = localStorage.getItem("library_resources");
-  return stored ? JSON.parse(stored) : [];
-}
 
 window.selectGradeLevel = function(level) {
   activeLevel = level;
@@ -31,11 +55,12 @@ window.filterByYear = function(year) {
   document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
 };
 
-function renderSubjectPills() {
+async function renderSubjectPills() {
   const container = document.getElementById("subjectPillsContainer");
   if (!container) return;
 
-  const resources = getResources().filter(r => activeLevel === "all" || r.level === activeLevel);
+  const allResources = await getResourcesDB();
+  const resources = allResources.filter(r => activeLevel === "all" || r.level === activeLevel);
   const subjectCounts = {};
   resources.forEach(r => {
     if (r.subject) {
@@ -57,12 +82,12 @@ window.filterSubject = function(subj) {
   document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
 };
 
-function renderResources(searchQuery = "") {
+async function renderResources(searchQuery = "") {
   const grid = document.getElementById("resourceGrid");
   if (!grid) return;
 
   const searchVal = searchQuery.toLowerCase();
-  const resources = getResources();
+  const resources = await getResourcesDB();
 
   const filtered = resources.filter(res => {
     const matchesLevel = activeLevel === "all" || res.level === activeLevel;
@@ -73,7 +98,7 @@ function renderResources(searchQuery = "") {
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748b; font-weight: 600;'>No past paper files uploaded yet. Upload papers from the Admin Portal to populate this section!</div>";
+    grid.innerHTML = ""; 
     return;
   }
 
@@ -96,9 +121,10 @@ function renderResources(searchQuery = "") {
   });
 }
 
-window.openTimetableModal = function(title) {
+window.openTimetableModal = async function(title) {
   document.getElementById("modalPdfTitle").textContent = `${title} - ECZ Examination Timetable`;
-  const resources = getResources().filter(r => r.category === "timetable" || r.title.toLowerCase().includes("timetable"));
+  const allResources = await getResourcesDB();
+  const resources = allResources.filter(r => r.category === "timetable" || (r.title && r.title.toLowerCase().includes("timetable")));
   
   let timetableHtml = "";
   if (resources.length > 0) {
