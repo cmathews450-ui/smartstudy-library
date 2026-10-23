@@ -1,138 +1,143 @@
-document.addEventListener("DOMContentLoaded", () => {
-  if (!localStorage.getItem("admin_user")) {
-    localStorage.setItem("admin_user", "admin");
-    localStorage.setItem("admin_pass", "admin123");
-  }
+let activeLevel = "all";
+let selectedSubject = "all";
+let selectedYear = "all";
 
-  document.getElementById("toggleAdminPass")?.addEventListener("click", function() {
-    const p = document.getElementById("adminPasswordInput");
-    if (p) {
-      p.type = p.type === "password" ? "text" : "password";
-      this.textContent = p.type === "password" ? "👁️" : "🙈";
-    }
+window.addEventListener("DOMContentLoaded", () => {
+  renderSubjectPills();
+  renderResources();
+
+  document.getElementById("topSearchInput")?.addEventListener("input", function() {
+    renderResources(this.value);
   });
-
-  document.getElementById("adminLoginForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const user = document.getElementById("adminLoginUsername").value.trim().toLowerCase();
-    const pass = document.getElementById("adminPasswordInput").value.trim();
-    const errorMsg = document.getElementById("adminLoginError");
-
-    if (user === (localStorage.getItem("admin_user") || "admin") && pass === (localStorage.getItem("admin_pass") || "admin123")) {
-      sessionStorage.setItem("admin_logged_in", "true");
-      showAdminDashboard();
-    } else {
-      if (errorMsg) {
-        errorMsg.textContent = "Invalid Username or Password. (Use: admin / admin123)";
-        errorMsg.style.display = "block";
-      }
-    }
-  });
-
-  document.getElementById("adminLogoutBtn")?.addEventListener("click", () => {
-    sessionStorage.removeItem("admin_logged_in");
-    location.reload();
-  });
-
-  document.getElementById("clearAllExamplesBtn")?.addEventListener("click", () => {
-    if (confirm("Are you sure you want to delete ALL uploaded files?")) {
-      localStorage.setItem("library_resources", JSON.stringify([]));
-      renderAdminResources();
-    }
-  });
-
-  if (sessionStorage.getItem("admin_logged_in") === "true") {
-    showAdminDashboard();
-  }
-
-  setupUploadHandler();
 });
 
-function showAdminDashboard() {
-  document.getElementById("adminAuthSection").style.display = "none";
-  document.getElementById("adminDashboardSection").style.display = "block";
-  renderAdminResources();
+// Always reads strictly what YOU uploaded in Admin Portal
+function getResources() {
+  const stored = localStorage.getItem("library_resources");
+  return stored ? JSON.parse(stored) : [];
 }
 
-function setupUploadHandler() {
-  const uploadForm = document.getElementById("addResourceForm");
-  if (!uploadForm) return;
+window.selectGradeLevel = function(level) {
+  activeLevel = level;
+  selectedSubject = "all";
+  selectedYear = "all";
+  renderSubjectPills();
+  renderResources();
+  document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
+};
 
-  uploadForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+window.filterByYear = function(year) {
+  selectedYear = year;
+  renderResources();
+  document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
+};
 
-    const title = document.getElementById("resTitle").value.trim();
-    const category = document.getElementById("resCategory").value; // past_paper, notes, timetable
-    const level = document.getElementById("resLevel").value;
-    const subject = document.getElementById("resSubject").value.trim();
-    const year = document.getElementById("resYear").value.trim();
-    const fileInput = document.getElementById("resLocalFile");
+function renderSubjectPills() {
+  const container = document.getElementById("subjectPillsContainer");
+  if (!container) return;
 
-    if (!fileInput || fileInput.files.length === 0) {
-      alert("Please select a PDF file from your device!");
-      return;
+  const resources = getResources().filter(r => activeLevel === "all" || r.level === activeLevel);
+  const subjectCounts = {};
+  resources.forEach(r => {
+    if (r.subject) {
+      subjectCounts[r.subject] = (subjectCounts[r.subject] || 0) + 1;
     }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-      const fileDataUrl = event.target.result;
-      let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
-
-      const newRes = {
-        id: Date.now(),
-        title: title,
-        category: category,
-        level: level,
-        subject: subject,
-        year: year,
-        fileUrl: fileDataUrl
-      };
-
-      resources.unshift(newRes);
-      localStorage.setItem("library_resources", JSON.stringify(resources));
-      
-      uploadForm.reset();
-      alert(`Success! "${title}" has been uploaded.`);
-      renderAdminResources();
-    };
-
-    reader.readAsDataURL(file);
   });
+
+  let html = `<button class="pill ${selectedSubject === 'all' ? 'active' : ''}" onclick="filterSubject('all')">All</button>`;
+  for (let subj in subjectCounts) {
+    html += `<button class="pill ${selectedSubject === subj ? 'active' : ''}" onclick="filterSubject('${subj}')">${subj} (${subjectCounts[subj]})</button>`;
+  }
+  container.innerHTML = html;
 }
 
-function renderAdminResources() {
-  const listContainer = document.getElementById("adminResourceList");
-  if (!listContainer) return;
+window.filterSubject = function(subj) {
+  selectedSubject = subj;
+  renderSubjectPills();
+  renderResources();
+  document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
+};
 
-  let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
+function renderResources(searchQuery = "") {
+  const grid = document.getElementById("resourceGrid");
+  if (!grid) return;
 
-  if (resources.length === 0) {
-    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet.</p>";
+  const searchVal = searchQuery.toLowerCase();
+  const resources = getResources();
+
+  const filtered = resources.filter(res => {
+    const matchesLevel = activeLevel === "all" || res.level === activeLevel;
+    const matchesSubject = selectedSubject === "all" || (res.subject && res.subject.toLowerCase() === selectedSubject.toLowerCase());
+    const matchesYear = selectedYear === "all" || (res.year && res.year.toString() === selectedYear.toString());
+    const matchesSearch = (res.title || "").toLowerCase().includes(searchVal);
+    return matchesLevel && matchesSubject && matchesYear && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748b; font-weight: 600;'>No past paper files uploaded yet. Upload papers from the Admin Portal to populate this section.</div>";
     return;
   }
 
-  let html = "";
-  resources.forEach(res => {
-    html += `
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
-        <div>
-          <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
-          <small style="color: #64748b;">Category: ${res.category.toUpperCase()} | Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
-        </div>
-        <button onclick="deleteSingleResource(${res.id})" class="danger-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">Delete</button>
+  grid.innerHTML = "";
+  filtered.forEach(res => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div>
+        <span class="tag">${res.subject || 'General'}</span>
+        <span class="tag" style="background:#fef3c7; color:#d97706;">${res.year || '2026'}</span>
+        <h3>${res.title}</h3>
+      </div>
+      <div class="card-actions">
+        <button onclick="previewPDF('${res.fileUrl}', '${res.title}')" class="primary-btn" style="flex:1;">Preview</button>
+        <a href="${res.fileUrl}" class="download-btn" style="flex:1;" download="${res.title}.pdf">Download</a>
       </div>
     `;
+    grid.appendChild(card);
   });
-  listContainer.innerHTML = html;
 }
 
-window.deleteSingleResource = function(id) {
-  if (confirm("Delete this file?")) {
-    let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
-    resources = resources.filter(r => r.id !== id);
-    localStorage.setItem("library_resources", JSON.stringify(resources));
-    renderAdminResources();
+window.openTimetableModal = function(title) {
+  document.getElementById("modalPdfTitle").textContent = `${title} - ECZ Examination Timetable`;
+  const resources = getResources().filter(r => r.category === "timetable" || (r.title && r.title.toLowerCase().includes("timetable")));
+  
+  let timetableHtml = "";
+  if (resources.length > 0) {
+    resources.forEach(r => {
+      timetableHtml += `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong>${r.title}</strong><br>
+            <small style="color: #64748b;">Year: ${r.year || '2026'}</small>
+          </div>
+          <a href="${r.fileUrl}" class="download-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem;" download="${r.title}.pdf">Download PDF</a>
+        </div>
+      `;
+    });
+  } else {
+    timetableHtml = "<p style='color: #64748b;'>No official timetable PDF uploaded yet. Upload timetables in the Admin Portal.</p>";
   }
+
+  document.getElementById("modalContentBox").innerHTML = `
+    <div style="text-align: center; padding: 1rem;">
+      <h2 style="color: #0f172a; margin-bottom: 0.5rem;">📅 ${title} Timetable</h2>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">Official Examinations Council of Zambia (ECZ) Timetables</p>
+      ${timetableHtml}
+    </div>
+  `;
+  document.getElementById("pdfModal").style.display = "flex";
+};
+
+window.previewPDF = function(url, title) {
+  document.getElementById("modalPdfTitle").textContent = title;
+  document.getElementById("modalContentBox").innerHTML = `<iframe id="pdfFrame" style="width: 100%; height: 100%; border: none;" src="${url}"></iframe>`;
+  document.getElementById("pdfModal").style.display = "flex";
+};
+
+document.getElementById("closeModalBtn")?.addEventListener("click", function() {
+  document.getElementById("pdfModal").style.display = "none";
+});
+
+window.bookmarkSite = function() {
+  alert("Press Ctrl+D (or Cmd+D on Mac) to bookmark Mathew's SmartStudy Library!");
 };
