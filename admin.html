@@ -8,12 +8,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- Top Header Navigation -->
   <div class="top-header">
     <div class="top-brand">
       <div class="brand-logo-icon">📖</div>
       <div class="brand-text">
         <h2>Mathew's SmartStudy Library</h2>
-        <span class="green-badge">Admin Portal</span>
+        <span class="green-badge">Admin Dashboard</span>
       </div>
     </div>
     <div>
@@ -21,67 +23,90 @@
     </div>
   </div>
 
-  <div class="container" style="max-width: 500px; margin-top: 3rem;">
-    <!-- Admin Login Section -->
+  <div class="container" style="max-width: 600px; margin-top: 2rem;">
+
+    <!-- Admin Authentication Box -->
     <section id="adminAuthSection" class="admin-box">
-      <h3 style="margin-bottom: 0.5rem; color: #0f172a;">Admin Login</h3>
-      <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem;">Enter your administrator password (default is <code>admin123</code>).</p>
+      <h3 style="margin-bottom: 0.4rem; color: #0f172a;">Admin Control Login</h3>
+      <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem;">Enter your admin password to manage local files and uploads.</p>
       
       <form id="adminLoginForm">
         <div class="form-group">
-          <label>Password:</label>
+          <label>Admin Password:</label>
           <div class="password-wrapper">
-            <input type="password" id="adminPasswordInput" placeholder="Enter admin password" required>
+            <input type="password" id="adminPasswordInput" placeholder="Enter password" required>
             <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
           </div>
         </div>
-        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem;">Login to Dashboard</button>
+        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c;">Login to Admin Panel</button>
       </form>
+      
       <div class="auth-links" style="margin-top: 1rem;">
         <a id="adminForgotPassBtn" style="color: #ea580c; cursor: pointer; font-weight: 600;">Forgot Admin Password?</a>
       </div>
       <p id="adminLoginError" style="color: #ef4444; font-size: 0.85rem; display: none; margin-top: 0.8rem; text-align: center;"></p>
     </section>
 
-    <!-- Admin Dashboard Section -->
+    <!-- Admin Dashboard (Visible Only After Login) -->
     <section id="adminDashboardSection" class="admin-box" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-        <h3 style="color: #0f172a;">Admin Control Panel</h3>
-        <button id="adminLogoutBtn" class="danger-btn">Logout</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
+        <h3 style="color: #0f172a;">Resource Manager</h3>
+        <button id="adminLogoutBtn" class="danger-btn" style="padding: 0.4rem 0.8rem;">Logout</button>
       </div>
-      <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Welcome, Admin! You can manage past paper resources below.</p>
-      
-      <!-- Add Resource Form -->
-      <h4 style="margin-bottom: 0.8rem; color: #1e293b;">Upload New Solution / Past Paper</h4>
+
+      <!-- File Upload Form -->
+      <h4 style="margin-bottom: 0.8rem; color: #1e293b;">Upload Local File (PDF or Document)</h4>
       <form id="addResourceForm">
         <div class="form-group">
           <label>Resource Title:</label>
-          <input type="text" id="resTitle" placeholder="e.g. Grade 12 Mathematics Paper 1 (2026)" required>
+          <input type="text" id="resTitle" placeholder="e.g. 2026 Mathematics Paper 1" required>
         </div>
+
+        <div class="form-group">
+          <label>Category Section:</label>
+          <select id="resCategory">
+            <option value="past_paper">Past Papers</option>
+            <option value="timetable">Exam Timetable</option>
+            <option value="notes">Study Notes</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label>Grade Level:</label>
           <select id="resLevel">
             <option value="senior">Grade 12 (Senior)</option>
             <option value="junior">Grade 9 (Junior)</option>
             <option value="primary">Grade 7 (Primary)</option>
+            <option value="gce">GCE</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>Subject:</label>
-          <input type="text" id="resSubject" placeholder="e.g. Mathematics, Biology, Science" required>
+          <input type="text" id="resSubject" placeholder="e.g. Mathematics, Chemistry, English" required>
         </div>
+
         <div class="form-group">
-          <label>File URL (PDF Link):</label>
-          <input type="text" id="resUrl" placeholder="Enter PDF link or file path" required>
+          <label>Year:</label>
+          <input type="text" id="resYear" placeholder="e.g. 2026" value="2026" required>
         </div>
-        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem;">Add Resource</button>
+
+        <!-- Local File Selector (Phone / Computer Storage) -->
+        <div class="form-group">
+          <label>Select File from Local Device (PDF/Doc):</label>
+          <input type="file" id="resLocalFile" accept=".pdf,.doc,.docx" required style="padding: 0.4rem; background: #f8fafc;">
+        </div>
+
+        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c; margin-top: 0.5rem;">Upload Resource to Library</button>
       </form>
 
+      <!-- Existing Files List -->
       <div style="margin-top: 2rem;">
-        <h4 style="margin-bottom: 0.8rem; color: #1e293b;">Existing Resources</h4>
+        <h4 style="margin-bottom: 0.8rem; color: #1e293b; border-top: 1px solid #e2e8f0; padding-top: 1rem;">Manage Uploaded Resources</h4>
         <div id="adminResourceList" style="display: flex; flex-direction: column; gap: 0.6rem;"></div>
       </div>
     </section>
+
   </div>
 
   <script src="js/admin.js"></script>
