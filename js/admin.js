@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Ensure default admin password is set
+  // Set default admin password
   if (!localStorage.getItem("admin_password")) {
     localStorage.setItem("admin_password", "admin123");
   }
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const forgotPassBtn = document.getElementById("adminForgotPassBtn");
   const togglePassBtn = document.getElementById("toggleAdminPass");
 
-  // Toggle Password Eye Icon
+  // Eye Icon Password Toggle
   if (togglePassBtn) {
     togglePassBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Admin Login Handler
+  // Admin Login Event
   if (adminLoginForm) {
     adminLoginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -37,14 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
         showAdminDashboard();
       } else {
         if (errorMsg) {
-          errorMsg.textContent = "Invalid password. Default is admin123";
+          errorMsg.textContent = "Invalid Password! Default password is: admin123";
           errorMsg.style.display = "block";
         }
       }
     });
   }
 
-  // Admin Logout Handler
+  // Admin Logout Event
   if (adminLogoutBtn) {
     adminLogoutBtn.addEventListener("click", () => {
       sessionStorage.removeItem("admin_logged_in");
@@ -52,20 +52,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Working Forgot Password Handler
+  // Password Recovery Event
   if (forgotPassBtn) {
     forgotPassBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const currentPass = localStorage.getItem("admin_password") || "admin123";
-      const userChoice = confirm(`ADMIN RECOVERY:\n\nYour current password is: ${currentPass}\n\nWould you like to reset your password to "admin123"?`);
-      if (userChoice) {
+      const resetConfirm = confirm(`ADMIN RECOVERY:\n\nYour current password is: ${currentPass}\n\nDo you want to reset password back to "admin123"?`);
+      if (resetConfirm) {
         localStorage.setItem("admin_password", "admin123");
-        alert("Password successfully reset to: admin123");
+        alert("Password reset to: admin123");
       }
     });
   }
 
-  // Auto Login check
+  // Check login state
   if (sessionStorage.getItem("admin_logged_in") === "true") {
     showAdminDashboard();
   }
@@ -86,23 +86,45 @@ function setupAdminResourceManagement() {
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      
       const title = document.getElementById("resTitle").value.trim();
+      const category = document.getElementById("resCategory").value;
       const level = document.getElementById("resLevel").value;
       const subject = document.getElementById("resSubject").value.trim();
-      const fileUrl = document.getElementById("resUrl").value.trim();
+      const year = document.getElementById("resYear").value.trim();
+      const fileInput = document.getElementById("resLocalFile");
 
-      let resources = JSON.parse(localStorage.getItem("library_resources")) || [
-        { id: 1, title: "Grade 12 Mathematics Paper 1 (2025)", level: "senior", subject: "Mathematics", fileUrl: "#" },
-        { id: 2, title: "Grade 12 Biology Paper 2 (2025)", level: "senior", subject: "Biology", fileUrl: "#" },
-        { id: 3, title: "Grade 9 Science Past Paper (2024)", level: "junior", subject: "Science", fileUrl: "#" }
-      ];
+      if (fileInput.files.length === 0) {
+        alert("Please select a file from your phone or computer!");
+        return;
+      }
 
-      const newRes = { id: Date.now(), title, level, subject, fileUrl };
-      resources.push(newRes);
-      localStorage.setItem("library_resources", JSON.stringify(resources));
-      form.reset();
-      alert("Resource added successfully!");
-      renderAdminResources();
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const fileDataUrl = event.target.result; // Base64 data string of local file
+
+        let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
+
+        const newRes = {
+          id: Date.now(),
+          title: title,
+          category: category,
+          level: level,
+          subject: subject,
+          year: year,
+          fileUrl: fileDataUrl
+        };
+
+        resources.unshift(newRes);
+        localStorage.setItem("library_resources", JSON.stringify(resources));
+        form.reset();
+        alert(`Successfully uploaded "${title}" to your library!`);
+        renderAdminResources();
+      };
+
+      reader.readAsDataURL(file);
     });
   }
 }
@@ -111,14 +133,10 @@ function renderAdminResources() {
   const listContainer = document.getElementById("adminResourceList");
   if (!listContainer) return;
 
-  let resources = JSON.parse(localStorage.getItem("library_resources")) || [
-    { id: 1, title: "Grade 12 Mathematics Paper 1 (2025)", level: "senior", subject: "Mathematics", fileUrl: "#" },
-    { id: 2, title: "Grade 12 Biology Paper 2 (2025)", level: "senior", subject: "Biology", fileUrl: "#" },
-    { id: 3, title: "Grade 9 Science Past Paper (2024)", level: "junior", subject: "Science", fileUrl: "#" }
-  ];
+  let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
 
   if (resources.length === 0) {
-    listContainer.innerHTML = "<p style='color: #64748b;'>No resources uploaded yet.</p>";
+    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem;'>No custom resources uploaded yet.</p>";
     return;
   }
 
@@ -127,10 +145,10 @@ function renderAdminResources() {
     html += `
       <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.8rem; border: 1px solid #e2e8f0; border-radius: 8px;">
         <div>
-          <strong>${res.title}</strong><br>
-          <small style="color: #64748b;">Level: ${res.level} | Subject: ${res.subject}</small>
+          <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
+          <small style="color: #64748b;">Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
         </div>
-        <button onclick="deleteResource(${res.id})" class="danger-btn" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Delete</button>
+        <button onclick="deleteResource(${res.id})" class="danger-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">Delete</button>
       </div>
     `;
   });
@@ -138,8 +156,10 @@ function renderAdminResources() {
 }
 
 window.deleteResource = function(id) {
-  let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
-  resources = resources.filter(r => r.id !== id);
-  localStorage.setItem("library_resources", JSON.stringify(resources));
-  renderAdminResources();
+  if (confirm("Are you sure you want to delete this resource?")) {
+    let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
+    resources = resources.filter(r => r.id !== id);
+    localStorage.setItem("library_resources", JSON.stringify(resources));
+    renderAdminResources();
+  }
 };
