@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- Top Header with Site Title, Green Badge, and Search -->
+  <!-- Top Header with Branding and Search -->
   <div class="top-header">
     <div class="top-brand">
       <div class="brand-logo-icon">📖</div>
@@ -35,14 +35,12 @@
       <a href="#" class="nav-item">Subjects ▾</a>
       <a href="#" class="nav-item">Notes</a>
       <a href="#" class="nav-item">Exam Timetables</a>
-      <a href="admin.html" class="nav-item admin-link">Admin Portal</a>
-      <button id="headerStudentLogoutBtn" class="header-logout-btn" style="display: none;">Logout</button>
+      <a href="admin.html" class="nav-item admin-link" style="margin-left: auto;">Admin Portal</a>
     </div>
   </nav>
 
   <!-- Blue Water Animation Hero Section -->
   <div class="water-bg-wrapper">
-    <!-- Large Search Bar Bar Inside Water Banner -->
     <div class="hero-search-container">
       <div class="pill-search-bar">
         <input type="text" id="searchInput" placeholder="Search For Pastpapers......">
@@ -63,91 +61,15 @@
     </div>
   </div>
 
-  <!-- Main Content Container -->
+  <!-- Direct Access Library Content -->
   <div class="container">
+    <div class="search-filter-box">
+      <h4 style="margin-bottom: 0.6rem; color: #1e293b;">Filter Solutions by Subject:</h4>
+      <div id="subjectPillsContainer" class="subject-pills"></div>
+    </div>
 
-    <!-- Student Auth Section -->
-    <section id="studentAuthSection" class="admin-box" style="max-width: 480px; margin: 2rem auto;">
-      
-      <!-- Saved User Quick Login -->
-      <div id="savedUserLoginBox" style="display: none; text-align: center;">
-        <h3 style="margin-bottom: 0.5rem; color: #0f172a;">Welcome Back!</h3>
-        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-          Logged in as: <strong id="savedUsernameDisplay" style="color: #0284c7;"></strong>
-        </p>
-        <form id="savedUserForm">
-          <div class="form-group">
-            <div class="password-wrapper">
-              <input type="password" id="savedUserPasswordInput" placeholder="Enter password" required>
-              <button type="button" id="toggleSavedPass" class="toggle-password">👁️</button>
-            </div>
-          </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem;">Unlock Library</button>
-        </form>
-        <div class="auth-links">
-          <a id="switchAccountBtn">Switch Account</a>
-        </div>
-        <p id="savedLoginError" style="color: #ef4444; font-size: 0.85rem; display: none; margin-top: 0.5rem;"></p>
-      </div>
-
-      <!-- Registration / Standard Login -->
-      <div id="fullAuthBox">
-        <h3 id="authTitle" style="color: #0f172a; margin-bottom: 0.3rem;">Student Portal</h3>
-        <p id="authSubtitle" style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem;">Log in using your Username or Email/Phone.</p>
-        
-        <form id="studentAuthForm">
-          <div class="form-group" id="nameFieldGroup" style="display: none;">
-            <label>Full Name:</label>
-            <input type="text" id="studentNameInput" placeholder="e.g. Mathews Chanda">
-          </div>
-
-          <div class="form-group" id="usernameFieldGroup" style="display: none;">
-            <label>Username:</label>
-            <input type="text" id="studentUsernameInput" placeholder="Choose a unique username">
-          </div>
-
-          <div class="form-group">
-            <label id="identifierLabel">Username, Email, or Phone Number:</label>
-            <input type="text" id="studentIdentifierInput" placeholder="Enter details" required>
-          </div>
-
-          <div class="form-group">
-            <label>Password:</label>
-            <div class="password-wrapper">
-              <input type="password" id="studentPasswordInput" placeholder="Enter password" required>
-              <button type="button" id="toggleAuthPass" class="toggle-password">👁️</button>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.82rem;">
-            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
-              <input type="checkbox" id="rememberMeCheck" checked> Remember my details
-            </label>
-            <a id="studentForgotPassBtn" style="color: #ea580c; cursor: pointer; font-weight: 600;">Forgot Password?</a>
-          </div>
-
-          <button type="submit" id="authSubmitBtn" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c;">Login</button>
-        </form>
-
-        <div class="auth-links">
-          <span id="authToggleText">First time here? </span>
-          <a id="toggleAuthModeBtn" style="color: #ea580c; font-weight: 600;">Register an account</a>
-        </div>
-        <p id="authMessage" style="color: #ef4444; font-size: 0.85rem; display: none; margin-top: 0.8rem; text-align: center;"></p>
-      </div>
-
-    </section>
-
-    <!-- Student Library Resources Section -->
-    <section id="studentLibrarySection" style="display: none;">
-      <div class="search-filter-box">
-        <h4 style="margin-bottom: 0.6rem; color: #1e293b;">Filter Solutions by Subject:</h4>
-        <div id="subjectPillsContainer" class="subject-pills"></div>
-      </div>
-
-      <div id="resourceGrid" class="resource-grid"></div>
-    </section>
-
+    <!-- Resource Cards Grid -->
+    <div id="resourceGrid" class="resource-grid"></div>
   </div>
 
   <!-- PDF Preview Modal -->
