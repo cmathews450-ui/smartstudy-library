@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialize Default Main Admin Credentials
   if (!localStorage.getItem("admin_user")) {
     localStorage.setItem("admin_user", "admin");
     localStorage.setItem("admin_pass", "admin123");
   }
 
-  // Toggle Password Visibility
   document.getElementById("toggleAdminPass")?.addEventListener("click", function() {
     const p = document.getElementById("adminPasswordInput");
     if (p) {
@@ -14,17 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Admin Log In Handler
   document.getElementById("adminLoginForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const user = document.getElementById("adminLoginUsername").value.trim().toLowerCase();
     const pass = document.getElementById("adminPasswordInput").value.trim();
     const errorMsg = document.getElementById("adminLoginError");
 
-    const correctUser = localStorage.getItem("admin_user") || "admin";
-    const correctPass = localStorage.getItem("admin_pass") || "admin123";
-
-    if (user === correctUser && pass === correctPass) {
+    if (user === (localStorage.getItem("admin_user") || "admin") && pass === (localStorage.getItem("admin_pass") || "admin123")) {
       sessionStorage.setItem("admin_logged_in", "true");
       showAdminDashboard();
     } else {
@@ -35,13 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Logout Handler
   document.getElementById("adminLogoutBtn")?.addEventListener("click", () => {
     sessionStorage.removeItem("admin_logged_in");
     location.reload();
   });
 
-  // Clear All Files Button
   document.getElementById("clearAllExamplesBtn")?.addEventListener("click", () => {
     if (confirm("Are you sure you want to delete ALL uploaded files?")) {
       localStorage.setItem("library_resources", JSON.stringify([]));
@@ -49,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Auto-Check Active Login Session
   if (sessionStorage.getItem("admin_logged_in") === "true") {
     showAdminDashboard();
   }
@@ -58,12 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showAdminDashboard() {
-  const authSec = document.getElementById("adminAuthSection");
-  const dashSec = document.getElementById("adminDashboardSection");
-  
-  if (authSec) authSec.style.display = "none";
-  if (dashSec) dashSec.style.display = "block";
-
+  document.getElementById("adminAuthSection").style.display = "none";
+  document.getElementById("adminDashboardSection").style.display = "block";
   renderAdminResources();
 }
 
@@ -75,6 +62,7 @@ function setupUploadHandler() {
     e.preventDefault();
 
     const title = document.getElementById("resTitle").value.trim();
+    const category = document.getElementById("resCategory").value; // past_paper, notes, timetable
     const level = document.getElementById("resLevel").value;
     const subject = document.getElementById("resSubject").value.trim();
     const year = document.getElementById("resYear").value.trim();
@@ -95,6 +83,7 @@ function setupUploadHandler() {
       const newRes = {
         id: Date.now(),
         title: title,
+        category: category,
         level: level,
         subject: subject,
         year: year,
@@ -105,7 +94,7 @@ function setupUploadHandler() {
       localStorage.setItem("library_resources", JSON.stringify(resources));
       
       uploadForm.reset();
-      alert(`Success! "${title}" has been uploaded to the live site.`);
+      alert(`Success! "${title}" has been uploaded.`);
       renderAdminResources();
     };
 
@@ -120,7 +109,7 @@ function renderAdminResources() {
   let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
 
   if (resources.length === 0) {
-    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet. Fill out the form above to upload your first paper!</p>";
+    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet.</p>";
     return;
   }
 
@@ -130,7 +119,7 @@ function renderAdminResources() {
       <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
         <div>
           <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
-          <small style="color: #64748b;">Level: ${res.level.toUpperCase()} | Subject: ${res.subject} | Year: ${res.year}</small>
+          <small style="color: #64748b;">Category: ${res.category.toUpperCase()} | Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
         </div>
         <button onclick="deleteSingleResource(${res.id})" class="danger-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">Delete</button>
       </div>
@@ -140,7 +129,7 @@ function renderAdminResources() {
 }
 
 window.deleteSingleResource = function(id) {
-  if (confirm("Delete this file from your library?")) {
+  if (confirm("Delete this file?")) {
     let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
     resources = resources.filter(r => r.id !== id);
     localStorage.setItem("library_resources", JSON.stringify(resources));
