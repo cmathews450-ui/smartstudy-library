@@ -1,9 +1,24 @@
+// Initialize IndexedDB Database for Unlimited PDF Files
+function openLibraryDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("SmartStudyLibraryDB", 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains("resources")) {
+        db.createObjectStore("resources", { keyPath: "id" });
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderAdminResources();
 
   const form = document.getElementById("addResourceForm");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const btn = document.getElementById("uploadSubmitBtn");
@@ -26,20 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const file = fileInput.files[0];
-
-      // File size check: Warn if PDF exceeds 4.5MB for browser storage
-      if (file.size > 4.5 * 1024 * 1024) {
-        alert("This PDF file is too large for direct browser storage! Please choose a file smaller than 4.5MB.");
-        resetBtn();
-        return;
-      }
-
       const reader = new FileReader();
 
-      reader.onload = function(event) {
+      reader.onload = async function(event) {
         try {
           const fileDataUrl = event.target.result;
-          let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
+          const db = await openLibraryDB();
+          const tx = db.transaction("resources", "readwrite");
+          const store = tx.objectStore("resources");
 
           const newRes = {
             id: Date.now(),
@@ -51,15 +60,21 @@ document.addEventListener("DOMContentLoaded", () => {
             fileUrl: fileDataUrl
           };
 
-          resources.unshift(newRes);
-          localStorage.setItem("library_resources", JSON.stringify(resources));
+          store.put(newRes);
 
-          form.reset();
-          alert(`Success! "${title || file.name}" uploaded to live website.`);
-          renderAdminResources();
+          tx.oncomplete = () => {
+            form.reset();
+            alert(`Success! "${title || file.name}" uploaded to live website.`);
+            renderAdminResources();
+            resetBtn();
+          };
+
+          tx.onerror = (err) => {
+            alert("Error saving file to database.");
+            resetBtn();
+          };
         } catch (err) {
-          alert("Storage Limit Exceeded! Browser local storage is full. Please delete older files before uploading new ones.");
-        } finally {
+          alert("Database Error: " + err.message);
           resetBtn();
         }
       };
@@ -82,44 +97,59 @@ function resetBtn() {
   }
 }
 
-function renderAdminResources() {
+async function renderAdminResources() {
   const listContainer = document.getElementById("adminResourceList");
   if (!listContainer) return;
 
-  let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
+  try {
+    const db = await openLibraryDB();
+    const tx = db.transaction("resources", "readonly");
+    const store = tx.objectStore("resources");
+    const request = store.getAll();
 
-  if (resources.length === 0) {
-    listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet. Fill out the form above to upload your first paper!</p>";
-    return;
+    request.onsuccess = () => {
+      const resources = request.result || [];
+
+      if (resources.length === 0) {
+        listContainer.innerHTML = "<p style='color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem;'>No files in library yet. Fill out the form above to upload your first paper!</p>";
+        return;
+      }
+
+      let html = "";
+      resources.forEach(res => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+            <div>
+              <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
+              <small style="color: #64748b;">Category: ${(res.category || 'past_paper').toUpperCase()} | Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
+            </div>
+            <button type="button" onclick="deleteSingleResource(${res.id})" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Delete</button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    };
+  } catch (err) {
+    listContainer.innerHTML = "<p style='color: #ef4444;'>Error loading database.</p>";
   }
-
-  let html = "";
-  resources.forEach(res => {
-    html += `
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
-        <div>
-          <strong style="color: #0f172a; font-size: 0.9rem;">${res.title}</strong><br>
-          <small style="color: #64748b;">Category: ${(res.category || 'past_paper').toUpperCase()} | Level: ${res.level.toUpperCase()} | Subject: ${res.subject} (${res.year})</small>
-        </div>
-        <button type="button" onclick="deleteSingleResource(${res.id})" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Delete</button>
-      </div>
-    `;
-  });
-  listContainer.innerHTML = html;
 }
 
-window.deleteSingleResource = function(id) {
+window.deleteSingleResource = async function(id) {
   if (confirm("Delete this file from your library?")) {
-    let resources = JSON.parse(localStorage.getItem("library_resources")) || [];
-    resources = resources.filter(r => r.id !== id);
-    localStorage.setItem("library_resources", JSON.stringify(resources));
-    renderAdminResources();
+    const db = await openLibraryDB();
+    const tx = db.transaction("resources", "readwrite");
+    const store = tx.objectStore("resources");
+    store.delete(id);
+    tx.oncomplete = () => renderAdminResources();
   }
 };
 
-window.clearAllFiles = function() {
+window.clearAllFiles = async function() {
   if (confirm("Are you sure you want to delete ALL uploaded files from your library?")) {
-    localStorage.setItem("library_resources", JSON.stringify([]));
-    renderAdminResources();
+    const db = await openLibraryDB();
+    const tx = db.transaction("resources", "readwrite");
+    const store = tx.objectStore("resources");
+    store.clear();
+    tx.oncomplete = () => renderAdminResources();
   }
 };
