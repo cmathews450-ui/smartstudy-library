@@ -2,35 +2,6 @@ let activeLevel = "all";
 let selectedSubject = "all";
 let selectedYear = "all";
 
-function openLibraryDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("SmartStudyLibraryDB", 1);
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains("resources")) {
-        db.createObjectStore("resources", { keyPath: "id" });
-      }
-    };
-    request.onsuccess = (e) => resolve(e.target.result);
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-function getResourcesDB() {
-  return new Promise(async (resolve) => {
-    try {
-      const db = await openLibraryDB();
-      const tx = db.transaction("resources", "readonly");
-      const store = tx.objectStore("resources");
-      const request = store.getAll();
-      request.onsuccess = () => resolve(request.result || []);
-      request.onerror = () => resolve([]);
-    } catch (e) {
-      resolve([]);
-    }
-  });
-}
-
 window.addEventListener("DOMContentLoaded", () => {
   renderSubjectPills();
   renderResources();
@@ -39,6 +10,11 @@ window.addEventListener("DOMContentLoaded", () => {
     renderResources(this.value);
   });
 });
+
+function getResources() {
+  // Pulls from the global libraryResources array defined in js/data.js
+  return typeof libraryResources !== 'undefined' ? libraryResources : [];
+}
 
 window.selectGradeLevel = function(level) {
   activeLevel = level;
@@ -55,15 +31,14 @@ window.filterByYear = function(year) {
   document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
 };
 
-async function renderSubjectPills() {
+function renderSubjectPills() {
   const container = document.getElementById("subjectPillsContainer");
   if (!container) return;
 
-  const allResources = await getResourcesDB();
-  const resources = allResources.filter(r => activeLevel === "all" || r.level === activeLevel);
+  const resources = getResources().filter(r => activeLevel === "all" || r.level === activeLevel);
   const subjectCounts = {};
   resources.forEach(r => {
-    if (r.subject) {
+    if (r.subject && r.category === "past_paper") {
       subjectCounts[r.subject] = (subjectCounts[r.subject] || 0) + 1;
     }
   });
@@ -82,12 +57,12 @@ window.filterSubject = function(subj) {
   document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
 };
 
-async function renderResources(searchQuery = "") {
+function renderResources(searchQuery = "") {
   const grid = document.getElementById("resourceGrid");
   if (!grid) return;
 
   const searchVal = searchQuery.toLowerCase();
-  const resources = await getResourcesDB();
+  const resources = getResources().filter(r => r.category === "past_paper" || !r.category);
 
   const filtered = resources.filter(res => {
     const matchesLevel = activeLevel === "all" || res.level === activeLevel;
@@ -98,7 +73,7 @@ async function renderResources(searchQuery = "") {
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = ""; 
+    grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748b; font-weight: 600;'>No past papers available for this filter yet.</div>";
     return;
   }
 
@@ -113,18 +88,17 @@ async function renderResources(searchQuery = "") {
         <h3>${res.title}</h3>
       </div>
       <div class="card-actions">
-        <button onclick="previewPDF('${res.fileUrl}', '${res.title}')" class="primary-btn" style="flex:1;">Preview</button>
-        <a href="${res.fileUrl}" class="download-btn" style="flex:1;" download="${res.title}.pdf">Download</a>
+        <a href="${res.fileUrl}" target="_blank" class="primary-btn" style="flex:1; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;">Preview / Open</a>
+        <a href="${res.fileUrl}" target="_blank" class="download-btn" style="flex:1; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;">Download</a>
       </div>
     `;
     grid.appendChild(card);
   });
 }
 
-window.openTimetableModal = async function(title) {
+window.openTimetableModal = function(title) {
   document.getElementById("modalPdfTitle").textContent = `${title} - ECZ Examination Timetable`;
-  const allResources = await getResourcesDB();
-  const resources = allResources.filter(r => r.category === "timetable" || (r.title && r.title.toLowerCase().includes("timetable")));
+  const resources = getResources().filter(r => r.category === "timetable" || (r.title && r.title.toLowerCase().includes("timetable")));
   
   let timetableHtml = "";
   if (resources.length > 0) {
@@ -135,12 +109,12 @@ window.openTimetableModal = async function(title) {
             <strong>${r.title}</strong><br>
             <small style="color: #64748b;">Year: ${r.year || '2026'}</small>
           </div>
-          <a href="${r.fileUrl}" class="download-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem;" download="${r.title}.pdf">Download PDF</a>
+          <a href="${r.fileUrl}" target="_blank" class="download-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem; text-decoration:none;">Open PDF</a>
         </div>
       `;
     });
   } else {
-    timetableHtml = "<p style='color: #64748b;'>No official timetable PDF uploaded yet. Upload timetables in the Admin Portal.</p>";
+    timetableHtml = "<p style='color: #64748b;'>No official timetable link added yet.</p>";
   }
 
   document.getElementById("modalContentBox").innerHTML = `
@@ -150,12 +124,6 @@ window.openTimetableModal = async function(title) {
       ${timetableHtml}
     </div>
   `;
-  document.getElementById("pdfModal").style.display = "flex";
-};
-
-window.previewPDF = function(url, title) {
-  document.getElementById("modalPdfTitle").textContent = title;
-  document.getElementById("modalContentBox").innerHTML = `<iframe id="pdfFrame" style="width: 100%; height: 100%; border: none;" src="${url}"></iframe>`;
   document.getElementById("pdfModal").style.display = "flex";
 };
 
