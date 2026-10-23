@@ -1,35 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialize Default Main Admin Account
+  // Initialize Default Main Admin Account if none exists
   if (!localStorage.getItem("registered_admins")) {
     const admins = [{ username: "admin", password: "admin123", name: "Main Administrator" }];
     localStorage.setItem("registered_admins", JSON.stringify(admins));
   }
 
-  // Auth Tabs
-  const tabLoginBtn = document.getElementById("tabLoginBtn");
-  const tabRegisterBtn = document.getElementById("tabRegisterBtn");
+  // Toggle between Sign In and Register views
+  const showRegisterLink = document.getElementById("showRegisterLink");
+  const showLoginLink = document.getElementById("showLoginLink");
   const loginFormContainer = document.getElementById("loginFormContainer");
   const registerFormContainer = document.getElementById("registerFormContainer");
 
-  if (tabLoginBtn && tabRegisterBtn) {
-    tabLoginBtn.addEventListener("click", () => {
-      tabLoginBtn.style.background = "#ea580c";
-      tabLoginBtn.style.color = "#ffffff";
-      tabRegisterBtn.style.background = "transparent";
-      tabRegisterBtn.style.color = "#475569";
-      if (loginFormContainer) loginFormContainer.style.display = "block";
-      if (registerFormContainer) registerFormContainer.style.display = "none";
-    });
+  showRegisterLink?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (loginFormContainer) loginFormContainer.style.display = "none";
+    if (registerFormContainer) registerFormContainer.style.display = "block";
+  });
 
-    tabRegisterBtn.addEventListener("click", () => {
-      tabRegisterBtn.style.background = "#10b981";
-      tabRegisterBtn.style.color = "#ffffff";
-      tabLoginBtn.style.background = "transparent";
-      tabLoginBtn.style.color = "#475569";
-      if (registerFormContainer) registerFormContainer.style.display = "block";
-      if (loginFormContainer) loginFormContainer.style.display = "none";
-    });
-  }
+  showLoginLink?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (registerFormContainer) registerFormContainer.style.display = "none";
+    if (loginFormContainer) loginFormContainer.style.display = "block";
+  });
 
   // Toggle Password Visibility
   document.getElementById("toggleAdminPass")?.addEventListener("click", function() {
@@ -77,37 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
     savedAdmins.push({ username: user, password: pass, name: name });
     localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
     alert(`Admin account created for ${name}! You can now sign in.`);
-    tabLoginBtn?.click();
+    showLoginLink?.click();
   });
-
-  // Top Section Switcher Buttons (Upload Files vs Manage Admins)
-  const btnUpload = document.getElementById("btnSectionUpload");
-  const btnAdmins = document.getElementById("btnSectionAdmins");
-  const boxUpload = document.getElementById("sectionUploadBox");
-  const boxAdmins = document.getElementById("sectionAdminsBox");
-
-  if (btnUpload && btnAdmins) {
-    btnUpload.addEventListener("click", (e) => {
-      e.preventDefault();
-      btnUpload.style.background = "#ea580c";
-      btnUpload.style.color = "#ffffff";
-      btnAdmins.style.background = "#64748b";
-      btnAdmins.style.color = "#ffffff";
-      if (boxUpload) boxUpload.style.display = "block";
-      if (boxAdmins) boxAdmins.style.display = "none";
-    });
-
-    btnAdmins.addEventListener("click", (e) => {
-      e.preventDefault();
-      btnAdmins.style.background = "#ea580c";
-      btnAdmins.style.color = "#ffffff";
-      btnUpload.style.background = "#64748b";
-      btnUpload.style.color = "#ffffff";
-      if (boxAdmins) boxAdmins.style.display = "block";
-      if (boxUpload) boxUpload.style.display = "none";
-      renderAdminAccounts();
-    });
-  }
 
   // Logout
   document.getElementById("adminLogoutBtn")?.addEventListener("click", () => {
@@ -115,28 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     location.reload();
   });
 
-  // Password Change
-  document.getElementById("changePasswordForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const newPass = document.getElementById("newAdminPasswordInput").value.trim();
-    const activeAdmin = JSON.parse(sessionStorage.getItem("active_admin"));
-
-    if (activeAdmin) {
-      let savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
-      savedAdmins = savedAdmins.map(a => {
-        if (a.username.toLowerCase() === activeAdmin.username.toLowerCase()) {
-          a.password = newPass;
-        }
-        return a;
-      });
-      localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
-      alert("Password updated successfully!");
-    }
-  });
-
-  // Clear Example Data Button
+  // Clear All Files Button
   document.getElementById("clearAllExamplesBtn")?.addEventListener("click", () => {
-    if (confirm("Are you sure you want to delete ALL uploaded files? The library will be completely empty.")) {
+    if (confirm("Are you sure you want to delete ALL uploaded files?")) {
       localStorage.setItem("library_resources", JSON.stringify([]));
       renderAdminResources();
     }
@@ -244,33 +188,5 @@ window.deleteSingleResource = function(id) {
     resources = resources.filter(r => r.id !== id);
     localStorage.setItem("library_resources", JSON.stringify(resources));
     renderAdminResources();
-  }
-};
-
-function renderAdminAccounts() {
-  const listContainer = document.getElementById("adminAccountsList");
-  if (!listContainer) return;
-
-  const savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
-  let html = "";
-  savedAdmins.forEach(admin => {
-    html += `
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px;">
-        <div>
-          <strong style="color: #0f172a;">${admin.name}</strong> (@${admin.username})
-        </div>
-        ${admin.username !== 'admin' ? `<button onclick="removeAdminAccount('${admin.username}')" class="danger-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">Remove Admin</button>` : '<span style="font-size: 0.75rem; color: #10b981; font-weight: bold;">Main Admin</span>'}
-      </div>
-    `;
-  });
-  listContainer.innerHTML = html;
-}
-
-window.removeAdminAccount = function(username) {
-  if (confirm(`Remove admin privileges for @${username}?`)) {
-    let savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
-    savedAdmins = savedAdmins.filter(a => a.username !== username);
-    localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
-    renderAdminAccounts();
   }
 };
