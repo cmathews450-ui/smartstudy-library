@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Ensure default admin password is set
   if (!localStorage.getItem("admin_password")) {
     localStorage.setItem("admin_password", "admin123");
   }
@@ -8,18 +9,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const forgotPassBtn = document.getElementById("adminForgotPassBtn");
   const togglePassBtn = document.getElementById("toggleAdminPass");
 
+  // Toggle Password Eye Icon
   if (togglePassBtn) {
-    togglePassBtn.addEventListener("click", () => {
+    togglePassBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       const p = document.getElementById("adminPasswordInput");
-      p.type = p.type === "password" ? "text" : "password";
-      togglePassBtn.textContent = p.type === "password" ? "👁️" : "🙈";
+      if (p.type === "password") {
+        p.type = "text";
+        togglePassBtn.textContent = "🙈";
+      } else {
+        p.type = "password";
+        togglePassBtn.textContent = "👁️";
+      }
     });
   }
 
+  // Admin Login Handler
   if (adminLoginForm) {
     adminLoginForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const enteredPass = document.getElementById("adminPasswordInput").value;
+      const enteredPass = document.getElementById("adminPasswordInput").value.trim();
       const currentPass = localStorage.getItem("admin_password") || "admin123";
       const errorMsg = document.getElementById("adminLoginError");
 
@@ -28,13 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
         showAdminDashboard();
       } else {
         if (errorMsg) {
-          errorMsg.textContent = "Invalid password. Default password is admin123";
+          errorMsg.textContent = "Invalid password. Default is admin123";
           errorMsg.style.display = "block";
         }
       }
     });
   }
 
+  // Admin Logout Handler
   if (adminLogoutBtn) {
     adminLogoutBtn.addEventListener("click", () => {
       sessionStorage.removeItem("admin_logged_in");
@@ -42,13 +52,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Working Forgot Password Handler
   if (forgotPassBtn) {
     forgotPassBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      alert("Default Admin Password is: admin123");
+      const currentPass = localStorage.getItem("admin_password") || "admin123";
+      const userChoice = confirm(`ADMIN RECOVERY:\n\nYour current password is: ${currentPass}\n\nWould you like to reset your password to "admin123"?`);
+      if (userChoice) {
+        localStorage.setItem("admin_password", "admin123");
+        alert("Password successfully reset to: admin123");
+      }
     });
   }
 
+  // Auto Login check
   if (sessionStorage.getItem("admin_logged_in") === "true") {
     showAdminDashboard();
   }
@@ -80,14 +97,7 @@ function setupAdminResourceManagement() {
         { id: 3, title: "Grade 9 Science Past Paper (2024)", level: "junior", subject: "Science", fileUrl: "#" }
       ];
 
-      const newRes = {
-        id: Date.now(),
-        title,
-        level,
-        subject,
-        fileUrl
-      };
-
+      const newRes = { id: Date.now(), title, level, subject, fileUrl };
       resources.push(newRes);
       localStorage.setItem("library_resources", JSON.stringify(resources));
       form.reset();
