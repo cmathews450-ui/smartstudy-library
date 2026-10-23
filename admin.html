@@ -27,7 +27,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
         <div>
           <h3 style="color: #0f172a;">Library Management Dashboard</h3>
-          <p style="color: #64748b; font-size: 0.82rem;">Upload real PDF files, study notes, or timetables directly to your site.</p>
+          <p style="color: #64748b; font-size: 0.82rem;">Upload real PDF files directly to your live website.</p>
         </div>
         <a href="index.html" class="primary-btn" style="text-decoration: none; padding: 0.4rem 0.8rem; font-size: 0.82rem; background: #0d9488;">View Site</a>
       </div>
@@ -36,52 +36,54 @@
       <div id="sectionUploadBox">
         <h4 style="margin-bottom: 0.8rem; color: #1e293b;">Upload Real File (PDF/Document)</h4>
         
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Resource Title:</label>
-          <input type="text" id="resTitle" placeholder="e.g. G12 Mathematics Paper 1 (2026)" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
-        </div>
+        <form id="addResourceForm">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Resource Title:</label>
+            <input type="text" id="resTitle" placeholder="e.g. G12 Biology Paper 1 2016 GCE" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
 
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Website Section Category:</label>
-          <select id="resCategory" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
-            <option value="past_paper">Past Paper / GCE Pastpaper</option>
-            <option value="notes">Study Notes</option>
-            <option value="timetable">Exam Timetable</option>
-          </select>
-        </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Website Section Category:</label>
+            <select id="resCategory" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+              <option value="past_paper">Past Paper / GCE Pastpaper</option>
+              <option value="notes">Study Notes</option>
+              <option value="timetable">Exam Timetable</option>
+            </select>
+          </div>
 
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Grade Level:</label>
-          <select id="resLevel" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
-            <option value="senior">Grade 12 (Senior)</option>
-            <option value="junior">Grade 9 (Junior)</option>
-            <option value="primary">Grade 7 (Primary)</option>
-            <option value="gce">GCE</option>
-          </select>
-        </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Grade Level:</label>
+            <select id="resLevel" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+              <option value="gce">GCE</option>
+              <option value="senior">Grade 12 (Senior)</option>
+              <option value="junior">Grade 9 (Junior)</option>
+              <option value="primary">Grade 7 (Primary)</option>
+            </select>
+          </div>
 
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Subject:</label>
-          <input type="text" id="resSubject" placeholder="e.g. Mathematics, Bemba, Chemistry" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
-        </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Subject:</label>
+            <input type="text" id="resSubject" placeholder="e.g. BIOLOGY, MATHEMATICS" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
 
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Year:</label>
-          <input type="text" id="resYear" value="2026" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
-        </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Year:</label>
+            <input type="text" id="resYear" value="2016" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
 
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Select PDF File from Local Storage:</label>
-          <input type="file" id="resLocalFile" accept=".pdf,.doc,.docx" style="width: 100%; padding: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-        </div>
-        
-        <button type="button" onclick="handleDirectUpload()" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.5rem;">Upload to Live Website</button>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Select PDF File from Local Storage:</label>
+            <input type="file" id="resLocalFile" accept=".pdf,.doc,.docx" required style="width: 100%; padding: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          
+          <button type="submit" id="uploadSubmitBtn" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.5rem;">Upload to Live Website</button>
+        </form>
 
         <!-- Manage Uploaded Resources -->
         <div style="margin-top: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
             <h4 style="color: #1e293b;">Uploaded Library Files</h4>
-            <button onclick="clearAllFiles()" class="danger-btn" style="padding: 0.35rem 0.7rem; font-size: 0.78rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear All Files</button>
+            <button type="button" onclick="clearAllFiles()" class="danger-btn" style="padding: 0.35rem 0.7rem; font-size: 0.78rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear All Files</button>
           </div>
           <div id="adminResourceList" style="display: flex; flex-direction: column; gap: 0.6rem;"></div>
         </div>
