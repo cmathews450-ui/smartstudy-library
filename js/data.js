@@ -16,7 +16,7 @@ const libraryResources = [
     level: "senior",
     subject: "MATHEMATICS",
     year: "2026",
-    fileUrl: "YOUR_GOOGLE_DRIVE_SHARE_LINK_HERE"
+    fileUrl: "https://drive.google.com/file/d/1VbJJwYIi8YNKz5995Vn29oiciqP2_dB1/view?usp=sharing"
   },
   {
     id: 3,
