@@ -1,11 +1,3 @@
-const defaultResources = [
-  { id: 1, title: "2026 Mathematics Paper 1", level: "senior", subject: "Mathematics", year: "2026", fileUrl: "#" },
-  { id: 2, title: "2026 Chemistry Paper 2", level: "senior", subject: "Chemistry", year: "2026", fileUrl: "#" },
-  { id: 3, title: "2025 English Paper 1", level: "senior", subject: "English", year: "2025", fileUrl: "#" },
-  { id: 4, title: "2025 Science Paper 2 GCE", level: "gce", subject: "Science", year: "2025", fileUrl: "#" },
-  { id: 5, title: "2024 Geography Paper 1", level: "junior", subject: "Geography", year: "2024", fileUrl: "#" }
-];
-
 let activeLevel = "all";
 let selectedSubject = "all";
 let selectedYear = "all";
@@ -21,7 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function getResources() {
   const stored = localStorage.getItem("library_resources");
-  return stored ? JSON.parse(stored) : defaultResources;
+  return stored ? JSON.parse(stored) : [];
 }
 
 window.selectGradeLevel = function(level) {
@@ -46,7 +38,9 @@ function renderSubjectPills() {
   const resources = getResources().filter(r => activeLevel === "all" || r.level === activeLevel);
   const subjectCounts = {};
   resources.forEach(r => {
-    subjectCounts[r.subject] = (subjectCounts[r.subject] || 0) + 1;
+    if (r.subject) {
+      subjectCounts[r.subject] = (subjectCounts[r.subject] || 0) + 1;
+    }
   });
 
   let html = `<button class="pill ${selectedSubject === 'all' ? 'active' : ''}" onclick="filterSubject('all')">All</button>`;
@@ -72,14 +66,14 @@ function renderResources(searchQuery = "") {
 
   const filtered = resources.filter(res => {
     const matchesLevel = activeLevel === "all" || res.level === activeLevel;
-    const matchesSubject = selectedSubject === "all" || res.subject === selectedSubject;
-    const matchesYear = selectedYear === "all" || (res.year && res.year === selectedYear);
-    const matchesSearch = res.title.toLowerCase().includes(searchVal);
+    const matchesSubject = selectedSubject === "all" || (res.subject && res.subject.toLowerCase() === selectedSubject.toLowerCase());
+    const matchesYear = selectedYear === "all" || (res.year && res.year.toString() === selectedYear.toString());
+    const matchesSearch = (res.title || "").toLowerCase().includes(searchVal);
     return matchesLevel && matchesSubject && matchesYear && matchesSearch;
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = "<p style='color: #64748b; padding: 1rem;'>No solutions found for this selection.</p>";
+    grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748b; font-weight: 600;'>No past paper files uploaded yet. Upload papers from the Admin Portal to populate this section!</div>";
     return;
   }
 
@@ -89,7 +83,8 @@ function renderResources(searchQuery = "") {
     card.className = "card";
     card.innerHTML = `
       <div>
-        <span class="tag">${res.subject}</span>
+        <span class="tag">${res.subject || 'General'}</span>
+        <span class="tag" style="background:#fef3c7; color:#d97706;">${res.year || '2026'}</span>
         <h3>${res.title}</h3>
       </div>
       <div class="card-actions">
@@ -101,21 +96,32 @@ function renderResources(searchQuery = "") {
   });
 }
 
-// Interactive Timetable Modal Trigger
 window.openTimetableModal = function(title) {
-  document.getElementById("modalPdfTitle").textContent = `${title} - ECZ Examination Timetable 2026`;
-  document.getElementById("pdfFrame").style.display = "none";
+  document.getElementById("modalPdfTitle").textContent = `${title} - ECZ Examination Timetable`;
+  const resources = getResources().filter(r => r.category === "timetable" || r.title.toLowerCase().includes("timetable"));
+  
+  let timetableHtml = "";
+  if (resources.length > 0) {
+    resources.forEach(r => {
+      timetableHtml += `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong>${r.title}</strong><br>
+            <small style="color: #64748b;">Year: ${r.year || '2026'}</small>
+          </div>
+          <a href="${r.fileUrl}" class="download-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem;" download="${r.title}.pdf">Download PDF</a>
+        </div>
+      `;
+    });
+  } else {
+    timetableHtml = "<p style='color: #64748b;'>No official timetable PDF uploaded yet. Upload timetables in the Admin Portal.</p>";
+  }
+
   document.getElementById("modalContentBox").innerHTML = `
-    <div style="text-align: center; padding: 2rem;">
-      <h2 style="color: #0f172a; margin-bottom: 1rem;">📅 ${title} Timetable 2026</h2>
-      <p style="color: #64748b; margin-bottom: 1.5rem;">Official Examination Timetable scheduled by the Examinations Council of Zambia (ECZ).</p>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: inline-block; text-align: left;">
-        <p><strong>• Session 1:</strong> Morning Papers starting at 08:00 AM</p>
-        <p><strong>• Session 2:</strong> Afternoon Papers starting at 02:00 PM</p>
-      </div>
-      <div style="margin-top: 1.5rem;">
-        <button onclick="alert('Downloading official ECZ Timetable PDF...')" class="primary-btn" style="padding: 0.75rem 1.5rem;">Download Timetable (PDF)</button>
-      </div>
+    <div style="text-align: center; padding: 1rem;">
+      <h2 style="color: #0f172a; margin-bottom: 0.5rem;">📅 ${title} Timetable</h2>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">Official Examinations Council of Zambia (ECZ) Timetables</p>
+      ${timetableHtml}
     </div>
   `;
   document.getElementById("pdfModal").style.display = "flex";
