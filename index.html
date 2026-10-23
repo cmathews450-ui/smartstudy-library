@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- Top Header with Branding and Search -->
+  <!-- Top Header Navigation -->
   <div class="top-header">
     <div class="top-brand">
       <div class="brand-logo-icon">📖</div>
@@ -28,49 +28,169 @@
   <!-- Orange Main Navigation Bar -->
   <nav class="main-navbar">
     <div class="nav-container">
-      <a href="#" class="nav-item active">Home</a>
-      <a href="#" class="nav-item grade-tab" data-level="senior">Grade 12</a>
-      <a href="#" class="nav-item grade-tab" data-level="junior">Grade 9</a>
-      <a href="#" class="nav-item grade-tab" data-level="primary">Grade 7</a>
-      <a href="#" class="nav-item">Subjects ▾</a>
-      <a href="#" class="nav-item">Notes</a>
-      <a href="#" class="nav-item">Exam Timetables</a>
+      <a href="#hero" class="nav-item active">Home</a>
+      <a href="#levels" class="nav-item">Grade Levels</a>
+      <a href="#resources" class="nav-item">Past Papers</a>
+      <a href="#timetables" class="nav-item">Exam Timetables</a>
+      <a href="#about" class="nav-item">About</a>
       <a href="admin.html" class="nav-item admin-link" style="margin-left: auto;">Admin Portal</a>
     </div>
   </nav>
 
-  <!-- Blue Water Animation Hero Section -->
-  <div class="water-bg-wrapper">
-    <div class="hero-search-container">
-      <div class="pill-search-bar">
-        <input type="text" id="searchInput" placeholder="Search For Pastpapers......">
-        <button class="pill-search-btn">Search</button>
+  <!-- 1. Hero Banner with Blue Water Animation -->
+  <section id="hero" class="water-bg-wrapper">
+    <div class="hero-content-container">
+      <span class="hero-pill-badge">Mathew's SmartStudy Hub</span>
+      <h1>ECZ Past Papers & Study Resources</h1>
+      <p>Find ECZ past papers, examination timetables, revision resources, and helpful study materials for learners across Zambia.</p>
+      
+      <div class="hero-action-btns">
+        <a href="#resources" class="hero-btn-primary">📚 Explore Past Papers</a>
+        <a href="#timetables" class="hero-btn-outline">📅 Exam Timetables</a>
       </div>
-    </div>
 
-    <div class="hero-section">
-      <div class="hero-content">
-        <h2 id="heroTitle">Grade 12 ECZ Past Paper Solutions</h2>
-        <p>Innovate your future with free Zambian past paper solutions and step-by-step ECZ marking schemes.</p>
-        <div class="stats-bar">
-          <span id="statSolutions">0 solutions</span> • 
-          <span id="statSubjects">0 subjects</span> • 
-          <span id="statYears">2016–2026</span>
+      <div class="hero-stat-cards">
+        <div class="stat-card">
+          <strong>ECZ</strong>
+          <span>Past Papers & Revision</span>
+        </div>
+        <div class="stat-card">
+          <strong>2026</strong>
+          <span>Current Exam Resources</span>
+        </div>
+        <div class="stat-card">
+          <strong>100% FREE</strong>
+          <span>Open Student Access</span>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Direct Access Library Content -->
-  <div class="container">
+  <!-- 2. Find Resources By Level -->
+  <section id="levels" class="section-container">
+    <div class="section-title-box">
+      <span class="section-tag">QUICK ACCESS</span>
+      <h2>Find Resources By Level</h2>
+      <p>Choose your examination level to quickly find past papers and revision materials.</p>
+    </div>
+
+    <div class="level-cards-grid">
+      <div class="level-card" onclick="selectGradeLevel('primary')">
+        <div class="level-num num-green">07</div>
+        <div class="level-info">
+          <h3>Grade 7</h3>
+          <p>Primary School</p>
+        </div>
+        <span class="arrow-icon">→</span>
+      </div>
+
+      <div class="level-card" onclick="selectGradeLevel('junior')">
+        <div class="level-num num-orange">09</div>
+        <div class="level-info">
+          <h3>Grade 9</h3>
+          <p>Junior Secondary</p>
+        </div>
+        <span class="arrow-icon">→</span>
+      </div>
+
+      <div class="level-card" onclick="selectGradeLevel('senior')">
+        <div class="level-num num-purple">12</div>
+        <div class="level-info">
+          <h3>Grade 12</h3>
+          <p>Senior Secondary</p>
+        </div>
+        <span class="arrow-icon">→</span>
+      </div>
+
+      <div class="level-card" onclick="selectGradeLevel('gce')">
+        <div class="level-num num-red">GCE</div>
+        <div class="level-info">
+          <h3>GCE</h3>
+          <p>General Certificate</p>
+        </div>
+        <span class="arrow-icon">→</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Resource Explorer Section -->
+  <section id="resources" class="section-container light-bg">
+    <div class="section-title-box">
+      <span class="section-tag">ECZ PAST PAPERS</span>
+      <h2>Top Downloaded & Revision Papers</h2>
+      <p>Popular examination papers students are accessing for revision and preparation.</p>
+    </div>
+
     <div class="search-filter-box">
       <h4 style="margin-bottom: 0.6rem; color: #1e293b;">Filter Solutions by Subject:</h4>
       <div id="subjectPillsContainer" class="subject-pills"></div>
     </div>
 
-    <!-- Resource Cards Grid -->
     <div id="resourceGrid" class="resource-grid"></div>
-  </div>
+  </section>
+
+  <!-- 4. ECZ Exam Timetables Section -->
+  <section id="timetables" class="section-container dark-bg">
+    <div class="section-title-box dark-text">
+      <h2>ECZ Exam Timetables 2026</h2>
+      <p>Find examination timetable information for different ECZ examination levels.</p>
+    </div>
+
+    <div class="timetable-cards-grid">
+      <div class="timetable-card">
+        <span class="tt-badge">07</span>
+        <h3>Grade 7</h3>
+        <p>Examination Timetable</p>
+      </div>
+      <div class="timetable-card">
+        <span class="tt-badge">09</span>
+        <h3>Grade 9 Internal</h3>
+        <p>Examination Timetable</p>
+      </div>
+      <div class="timetable-card">
+        <span class="tt-badge">09</span>
+        <h3>Grade 9 External</h3>
+        <p>Examination Timetable</p>
+      </div>
+      <div class="timetable-card">
+        <span class="tt-badge">12</span>
+        <h3>Grade 12 Internal</h3>
+        <p>Examination Timetable</p>
+      </div>
+      <div class="timetable-card">
+        <span class="tt-badge">12</span>
+        <h3>Grade 12 External</h3>
+        <p>Examination Timetable</p>
+      </div>
+      <div class="timetable-card">
+        <span class="tt-badge">GCE</span>
+        <h3>GCE</h3>
+        <p>Examination Timetable</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. About The Platform & Bookmark Prompt -->
+  <section id="about" class="section-container">
+    <div class="info-card-box">
+      <div class="info-flag-icon">🇿🇲</div>
+      <div class="info-content">
+        <span class="section-tag">ABOUT THE PLATFORM</span>
+        <h2>Your Zambia ECZ Revision Resource</h2>
+        <p>Mathew's SmartStudy Library is an educational resource platform created to make examination materials easier for learners across Zambia to find and use. Students can explore ECZ past papers, examination timetables, revision resources, and educational updates in one place.</p>
+        <p>Whether you are preparing for Grade 7, Grade 9, Grade 12, or GCE examinations, our goal is to help you find useful study materials and prepare with greater confidence.</p>
+      </div>
+    </div>
+
+    <div class="bookmark-card-box">
+      <div class="bm-icon">🔖</div>
+      <div class="bm-text">
+        <h3>Bookmark Mathew's SmartStudy Library</h3>
+        <p>Save this website to your bookmarks for quick access to past papers, timetables, and revision resources.</p>
+      </div>
+      <button onclick="bookmarkSite()" class="primary-btn">Save Website</button>
+    </div>
+  </section>
 
   <!-- PDF Preview Modal -->
   <div id="pdfModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 1rem;">
