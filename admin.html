@@ -25,9 +25,9 @@
     <!-- Admin Authentication Box -->
     <section id="adminAuthSection" class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
       
-      <!-- Login Form (Default View) -->
+      <!-- Log In Form (Default View) -->
       <div id="loginFormContainer">
-        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Sign In</h3>
+        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Log In</h3>
         <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.</p>
         
         <form id="adminLoginForm">
@@ -43,19 +43,19 @@
               <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
             </div>
           </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Sign In to Portal</button>
+          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Log In to Portal</button>
         </form>
 
         <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
           <span>First time here? </span>
-          <a id="showRegisterLink" style="color: #ea580c; font-weight: 600; cursor: pointer;">Register an account</a>
+          <button type="button" id="showRegisterBtn" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Register an account</button>
         </div>
       </div>
 
-      <!-- Register Form (Hidden until clicked) -->
+      <!-- Register Form (Hidden until button is clicked) -->
       <div id="registerFormContainer" style="display: none;">
         <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Register Admin Account</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Create your first-time admin credentials.</p>
+        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Create your admin account credentials.</p>
         
         <form id="adminRegisterForm">
           <div class="form-group">
@@ -75,7 +75,7 @@
 
         <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
           <span>Already registered? </span>
-          <a id="showLoginLink" style="color: #ea580c; font-weight: 600; cursor: pointer;">Sign In</a>
+          <button type="button" id="showLoginBtn" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Log In</button>
         </div>
       </div>
 
