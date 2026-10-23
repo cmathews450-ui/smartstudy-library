@@ -11,7 +11,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Always reads strictly what YOU uploaded in Admin Portal
 function getResources() {
   const stored = localStorage.getItem("library_resources");
   return stored ? JSON.parse(stored) : [];
@@ -74,7 +73,8 @@ function renderResources(searchQuery = "") {
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748b; font-weight: 600;'>No past paper files uploaded yet. Upload papers from the Admin Portal to populate this section.</div>";
+    // Left empty or subtle so it doesn't stand out abruptly
+    grid.innerHTML = ""; 
     return;
   }
 
