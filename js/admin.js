@@ -1,19 +1,8 @@
-// Bulletproof Global Switch Functions
-window.switchToRegister = function() {
-  document.getElementById("loginFormContainer").style.display = "none";
-  document.getElementById("registerFormContainer").style.display = "block";
-};
-
-window.switchToLogin = function() {
-  document.getElementById("registerFormContainer").style.display = "none";
-  document.getElementById("loginFormContainer").style.display = "block";
-};
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialize Default Main Admin Account if none exists
-  if (!localStorage.getItem("registered_admins")) {
-    const admins = [{ username: "admin", password: "admin123", name: "Main Administrator" }];
-    localStorage.setItem("registered_admins", JSON.stringify(admins));
+  // Initialize Default Main Admin Credentials
+  if (!localStorage.getItem("admin_user")) {
+    localStorage.setItem("admin_user", "admin");
+    localStorage.setItem("admin_pass", "admin123");
   }
 
   // Toggle Password Visibility
@@ -25,49 +14,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Admin Log In
+  // Admin Log In Handler
   document.getElementById("adminLoginForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const user = document.getElementById("adminLoginUsername").value.trim().toLowerCase();
     const pass = document.getElementById("adminPasswordInput").value.trim();
     const errorMsg = document.getElementById("adminLoginError");
 
-    const savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
-    const matchedAdmin = savedAdmins.find(a => a.username.toLowerCase() === user && a.password === pass);
+    const correctUser = localStorage.getItem("admin_user") || "admin";
+    const correctPass = localStorage.getItem("admin_pass") || "admin123";
 
-    if (matchedAdmin) {
-      sessionStorage.setItem("active_admin", JSON.stringify(matchedAdmin));
+    if (user === correctUser && pass === correctPass) {
+      sessionStorage.setItem("admin_logged_in", "true");
       showAdminDashboard();
     } else {
       if (errorMsg) {
-        errorMsg.textContent = "Invalid Admin Username or Password.";
+        errorMsg.textContent = "Invalid Username or Password. (Use: admin / admin123)";
         errorMsg.style.display = "block";
       }
     }
   });
 
-  // Admin Registration
-  document.getElementById("adminRegisterForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const name = document.getElementById("regAdminName").value.trim();
-    const user = document.getElementById("regAdminUsername").value.trim();
-    const pass = document.getElementById("regAdminPassword").value.trim();
-
-    let savedAdmins = JSON.parse(localStorage.getItem("registered_admins")) || [];
-    if (savedAdmins.some(a => a.username.toLowerCase() === user.toLowerCase())) {
-      alert("An admin with this username already exists!");
-      return;
-    }
-
-    savedAdmins.push({ username: user, password: pass, name: name });
-    localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
-    alert(`Admin account created for ${name}! You can now log in.`);
-    window.switchToLogin();
-  });
-
-  // Logout
+  // Logout Handler
   document.getElementById("adminLogoutBtn")?.addEventListener("click", () => {
-    sessionStorage.removeItem("active_admin");
+    sessionStorage.removeItem("admin_logged_in");
     location.reload();
   });
 
@@ -80,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Auto-Check Active Login Session
-  if (sessionStorage.getItem("active_admin")) {
+  if (sessionStorage.getItem("admin_logged_in") === "true") {
     showAdminDashboard();
   }
 
@@ -88,17 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showAdminDashboard() {
-  const activeAdmin = JSON.parse(sessionStorage.getItem("active_admin"));
   const authSec = document.getElementById("adminAuthSection");
   const dashSec = document.getElementById("adminDashboardSection");
   
   if (authSec) authSec.style.display = "none";
   if (dashSec) dashSec.style.display = "block";
-
-  const nameDisplay = document.getElementById("activeAdminDisplay");
-  if (nameDisplay && activeAdmin) {
-    nameDisplay.textContent = activeAdmin.name || activeAdmin.username;
-  }
 
   renderAdminResources();
 }
