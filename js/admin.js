@@ -1,30 +1,19 @@
+// Bulletproof Global Switch Functions
+window.switchToRegister = function() {
+  document.getElementById("loginFormContainer").style.display = "none";
+  document.getElementById("registerFormContainer").style.display = "block";
+};
+
+window.switchToLogin = function() {
+  document.getElementById("registerFormContainer").style.display = "none";
+  document.getElementById("loginFormContainer").style.display = "block";
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   // Initialize Default Main Admin Account if none exists
   if (!localStorage.getItem("registered_admins")) {
     const admins = [{ username: "admin", password: "admin123", name: "Main Administrator" }];
     localStorage.setItem("registered_admins", JSON.stringify(admins));
-  }
-
-  // Toggle between Log In and Register views
-  const showRegisterBtn = document.getElementById("showRegisterBtn");
-  const showLoginBtn = document.getElementById("showLoginBtn");
-  const loginFormContainer = document.getElementById("loginFormContainer");
-  const registerFormContainer = document.getElementById("registerFormContainer");
-
-  if (showRegisterBtn) {
-    showRegisterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (loginFormContainer) loginFormContainer.style.display = "none";
-      if (registerFormContainer) registerFormContainer.style.display = "block";
-    });
-  }
-
-  if (showLoginBtn) {
-    showLoginBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (registerFormContainer) registerFormContainer.style.display = "none";
-      if (loginFormContainer) loginFormContainer.style.display = "block";
-    });
   }
 
   // Toggle Password Visibility
@@ -73,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     savedAdmins.push({ username: user, password: pass, name: name });
     localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
     alert(`Admin account created for ${name}! You can now log in.`);
-    if (showLoginBtn) showLoginBtn.click();
+    window.switchToLogin();
   });
 
   // Logout
