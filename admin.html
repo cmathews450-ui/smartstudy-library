@@ -15,44 +15,21 @@
       <div class="brand-logo-icon">📖</div>
       <div class="brand-text">
         <h2>Mathew's SmartStudy Library</h2>
-        <span class="green-badge">Secure Admin Portal</span>
+        <span class="green-badge">Admin Portal</span>
       </div>
     </div>
   </div>
 
-  <div class="container" style="max-width: 600px; margin: 3rem auto;">
+  <div class="container" style="max-width: 600px; margin: 2rem auto;">
 
-    <!-- Admin Log In Box -->
-    <section id="adminAuthSection" class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
-      <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Log In</h3>
-      <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.<br><small style="color:#0d9488; font-weight:600;">Default Username: admin | Password: admin123</small></p>
-      
-      <form id="adminLoginForm">
-        <div class="form-group">
-          <label>Username:</label>
-          <input type="text" id="adminLoginUsername" placeholder="e.g. admin" required>
-        </div>
-
-        <div class="form-group">
-          <label>Password:</label>
-          <div class="password-wrapper">
-            <input type="password" id="adminPasswordInput" placeholder="Enter password" required>
-            <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
-          </div>
-        </div>
-        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Log In to Portal</button>
-      </form>
-      <p id="adminLoginError" style="color: #ef4444; font-size: 0.88rem; display: none; margin-top: 1rem; text-align: center;"></p>
-    </section>
-
-    <!-- Admin Dashboard (Visible After Login) -->
-    <section id="adminDashboardSection" class="admin-box" style="display: none; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+    <!-- Direct Admin Dashboard (No Login Needed) -->
+    <section class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
         <div>
-          <h3 style="color: #0f172a;">Welcome, Admin!</h3>
-          <p style="color: #64748b; font-size: 0.82rem;">Upload files for Past Papers, Notes, or Timetables.</p>
+          <h3 style="color: #0f172a;">Library Management Dashboard</h3>
+          <p style="color: #64748b; font-size: 0.82rem;">Upload real PDF files, study notes, or timetables directly to your site.</p>
         </div>
-        <button id="adminLogoutBtn" class="danger-btn" style="padding: 0.5rem 1rem;">Logout</button>
+        <a href="index.html" class="primary-btn" style="text-decoration: none; padding: 0.4rem 0.8rem; font-size: 0.82rem; background: #0d9488;">View Site</a>
       </div>
 
       <!-- Upload Section -->
@@ -64,7 +41,7 @@
             <input type="text" id="resTitle" placeholder="e.g. G12 Mathematics Paper 1 (2026)" required>
           </div>
 
-          <!-- Section Type (Past Paper, Study Notes, or Timetable) -->
+          <!-- Section Type Category -->
           <div class="form-group">
             <label>Website Section Category:</label>
             <select id="resCategory">
