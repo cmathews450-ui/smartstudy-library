@@ -7,7 +7,7 @@ const libraryResources = [
     level: "gce",           // Options: 'primary', 'junior', 'senior', 'gce'
     subject: "BIOLOGY",
     year: "2016",
-    fileUrl: "YOUR_GOOGLE_DRIVE_SHARE_LINK_HERE"
+    fileUrl: "https://drive.google.com/file/d/1E2Ld6yJzYfWDlKVudyhmOzhVymZPNZrU/view?usp=sharing"
   },
   {
     id: 2,
