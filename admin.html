@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="container" style="max-width: 550px; margin: 3rem auto;">
+  <div class="container" style="max-width: 600px; margin: 3rem auto;">
 
     <!-- Admin Log In Box -->
     <section id="adminAuthSection" class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
@@ -50,7 +50,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
         <div>
           <h3 style="color: #0f172a;">Welcome, Admin!</h3>
-          <p style="color: #64748b; font-size: 0.82rem;">Manage local files and uploads.</p>
+          <p style="color: #64748b; font-size: 0.82rem;">Upload files for Past Papers, Notes, or Timetables.</p>
         </div>
         <button id="adminLogoutBtn" class="danger-btn" style="padding: 0.5rem 1rem;">Logout</button>
       </div>
@@ -61,8 +61,19 @@
         <form id="addResourceForm">
           <div class="form-group">
             <label>Resource Title:</label>
-            <input type="text" id="resTitle" placeholder="e.g. G12 Bemba paper 1 (2017)" required>
+            <input type="text" id="resTitle" placeholder="e.g. G12 Mathematics Paper 1 (2026)" required>
           </div>
+
+          <!-- Section Type (Past Paper, Study Notes, or Timetable) -->
+          <div class="form-group">
+            <label>Website Section Category:</label>
+            <select id="resCategory">
+              <option value="past_paper">Past Paper / GCE Pastpaper</option>
+              <option value="notes">Study Notes</option>
+              <option value="timetable">Exam Timetable</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label>Grade Level:</label>
             <select id="resLevel">
@@ -72,18 +83,22 @@
               <option value="gce">GCE</option>
             </select>
           </div>
+
           <div class="form-group">
             <label>Subject:</label>
-            <input type="text" id="resSubject" placeholder="e.g. BEMBA, MATHEMATICS" required>
+            <input type="text" id="resSubject" placeholder="e.g. Mathematics, Bemba, Chemistry" required>
           </div>
+
           <div class="form-group">
             <label>Year:</label>
-            <input type="text" id="resYear" value="2017" required>
+            <input type="text" id="resYear" value="2026" required>
           </div>
+
           <div class="form-group">
             <label>Select PDF File from Local Storage:</label>
             <input type="file" id="resLocalFile" accept=".pdf,.doc,.docx" required style="padding: 0.4rem; background: #f8fafc;">
           </div>
+          
           <button type="submit" class="primary-btn" style="width: 100%; padding: 0.75rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Upload to Live Website</button>
         </form>
 
