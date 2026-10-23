@@ -5,23 +5,27 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("registered_admins", JSON.stringify(admins));
   }
 
-  // Toggle between Sign In and Register views
-  const showRegisterLink = document.getElementById("showRegisterLink");
-  const showLoginLink = document.getElementById("showLoginLink");
+  // Toggle between Log In and Register views
+  const showRegisterBtn = document.getElementById("showRegisterBtn");
+  const showLoginBtn = document.getElementById("showLoginBtn");
   const loginFormContainer = document.getElementById("loginFormContainer");
   const registerFormContainer = document.getElementById("registerFormContainer");
 
-  showRegisterLink?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (loginFormContainer) loginFormContainer.style.display = "none";
-    if (registerFormContainer) registerFormContainer.style.display = "block";
-  });
+  if (showRegisterBtn) {
+    showRegisterBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (loginFormContainer) loginFormContainer.style.display = "none";
+      if (registerFormContainer) registerFormContainer.style.display = "block";
+    });
+  }
 
-  showLoginLink?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (registerFormContainer) registerFormContainer.style.display = "none";
-    if (loginFormContainer) loginFormContainer.style.display = "block";
-  });
+  if (showLoginBtn) {
+    showLoginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (registerFormContainer) registerFormContainer.style.display = "none";
+      if (loginFormContainer) loginFormContainer.style.display = "block";
+    });
+  }
 
   // Toggle Password Visibility
   document.getElementById("toggleAdminPass")?.addEventListener("click", function() {
@@ -32,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Admin Login
+  // Admin Log In
   document.getElementById("adminLoginForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const user = document.getElementById("adminLoginUsername").value.trim().toLowerCase();
@@ -68,8 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     savedAdmins.push({ username: user, password: pass, name: name });
     localStorage.setItem("registered_admins", JSON.stringify(savedAdmins));
-    alert(`Admin account created for ${name}! You can now sign in.`);
-    showLoginLink?.click();
+    alert(`Admin account created for ${name}! You can now log in.`);
+    if (showLoginBtn) showLoginBtn.click();
   });
 
   // Logout
