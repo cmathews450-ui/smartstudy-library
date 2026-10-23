@@ -22,63 +22,26 @@
 
   <div class="container" style="max-width: 550px; margin: 3rem auto;">
 
-    <!-- Admin Authentication Box -->
+    <!-- Admin Log In Box -->
     <section id="adminAuthSection" class="admin-box" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Log In</h3>
+      <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.<br><small style="color:#0d9488; font-weight:600;">Default Username: admin | Password: admin123</small></p>
       
-      <!-- Log In Form (Default View) -->
-      <div id="loginFormContainer">
-        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Admin Log In</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Log in using your Admin Username and Password.<br><small style="color:#0d9488;">Default: admin / admin123</small></p>
-        
-        <form id="adminLoginForm">
-          <div class="form-group">
-            <label>Username:</label>
-            <input type="text" id="adminLoginUsername" placeholder="e.g. admin" required>
-          </div>
-
-          <div class="form-group">
-            <label>Password:</label>
-            <div class="password-wrapper">
-              <input type="password" id="adminPasswordInput" placeholder="Enter password" required>
-              <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
-            </div>
-          </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Log In to Portal</button>
-        </form>
-
-        <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
-          <span>First time here? </span>
-          <button type="button" onclick="switchToRegister()" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Register an account</button>
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label>Username:</label>
+          <input type="text" id="adminLoginUsername" placeholder="e.g. admin" required>
         </div>
-      </div>
 
-      <!-- Register Form (Hidden until button is clicked) -->
-      <div id="registerFormContainer" style="display: none;">
-        <h3 style="color: #0f172a; margin-bottom: 0.4rem; text-align: center;">Register Admin Account</h3>
-        <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.2rem; text-align: center;">Create your admin account credentials.</p>
-        
-        <form id="adminRegisterForm">
-          <div class="form-group">
-            <label>Full Name:</label>
-            <input type="text" id="regAdminName" placeholder="e.g. Mathews Chanda" required>
+        <div class="form-group">
+          <label>Password:</label>
+          <div class="password-wrapper">
+            <input type="password" id="adminPasswordInput" placeholder="Enter password" required>
+            <button type="button" id="toggleAdminPass" class="toggle-password">👁️</button>
           </div>
-          <div class="form-group">
-            <label>Admin Username:</label>
-            <input type="text" id="regAdminUsername" placeholder="Choose username" required>
-          </div>
-          <div class="form-group">
-            <label>Admin Password:</label>
-            <input type="password" id="regAdminPassword" placeholder="Create password" required>
-          </div>
-          <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #10b981; font-size: 1rem; margin-top: 0.5rem;">Create Account</button>
-        </form>
-
-        <div class="auth-links" style="margin-top: 1.2rem; text-align: center; font-size: 0.88rem;">
-          <span>Already registered? </span>
-          <button type="button" onclick="switchToLogin()" style="background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.88rem;">Log In</button>
         </div>
-      </div>
-
+        <button type="submit" class="primary-btn" style="width: 100%; padding: 0.8rem; background: #ea580c; font-size: 1rem; margin-top: 0.5rem;">Log In to Portal</button>
+      </form>
       <p id="adminLoginError" style="color: #ef4444; font-size: 0.88rem; display: none; margin-top: 1rem; text-align: center;"></p>
     </section>
 
@@ -86,7 +49,7 @@
     <section id="adminDashboardSection" class="admin-box" style="display: none; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
         <div>
-          <h3 style="color: #0f172a;">Welcome, <span id="activeAdminDisplay" style="color: #ea580c;">Admin</span>!</h3>
+          <h3 style="color: #0f172a;">Welcome, Admin!</h3>
           <p style="color: #64748b; font-size: 0.82rem;">Manage local files and uploads.</p>
         </div>
         <button id="adminLogoutBtn" class="danger-btn" style="padding: 0.5rem 1rem;">Logout</button>
