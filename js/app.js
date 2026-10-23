@@ -1,91 +1,39 @@
 const defaultResources = [
-  {
-    id: 1,
-    title: "Grade 12 Mathematics Paper 1 (2025)",
-    level: "senior",
-    subject: "Mathematics",
-    fileUrl: "#"
-  },
-  {
-    id: 2,
-    title: "Grade 12 Biology Paper 2 (2025)",
-    level: "senior",
-    subject: "Biology",
-    fileUrl: "#"
-  },
-  {
-    id: 3,
-    title: "Grade 9 Science Past Paper (2024)",
-    level: "junior",
-    subject: "Science",
-    fileUrl: "#"
-  }
+  { id: 1, title: "2025 Mathematics Paper 1", level: "senior", subject: "Mathematics", fileUrl: "#" },
+  { id: 2, title: "2025 Biology Paper 2", level: "senior", subject: "Biology", fileUrl: "#" },
+  { id: 3, title: "2024 Civic Education GCE", level: "gce", subject: "Civic Education", fileUrl: "#" },
+  { id: 4, title: "2024 Integrated Science", level: "junior", subject: "Science", fileUrl: "#" }
 ];
 
-let activeLevel = "senior"; // default Grade 12
+let activeLevel = "all";
 let selectedSubject = "all";
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Grade Tab Switching Listeners
-  document.querySelectorAll(".grade-tab[data-level]").forEach(tab => {
-    tab.addEventListener("click", function(e) {
-      e.preventDefault();
-      document.querySelectorAll(".grade-tab[data-level]").forEach(t => t.classList.remove("active"));
-      this.classList.add("active");
-      activeLevel = this.getAttribute("data-level");
-      selectedSubject = "all";
-      updateHeroBanner();
-      renderSubjectPills();
-      renderResources();
-    });
-  });
-
-  // Top Search & Main Search Event Listeners
-  document.getElementById("searchInput")?.addEventListener("input", renderResources);
-  document.getElementById("topSearchInput")?.addEventListener("input", function() {
-    const mainSearch = document.getElementById("searchInput");
-    if (mainSearch) {
-      mainSearch.value = this.value;
-      renderResources();
-    }
-  });
-
-  updateHeroBanner();
   renderSubjectPills();
   renderResources();
+
+  document.getElementById("topSearchInput")?.addEventListener("input", function() {
+    renderResources(this.value);
+  });
 });
-
-function updateHeroBanner() {
-  const titles = {
-    senior: "Grade 12 ECZ Past Paper Solutions",
-    junior: "Grade 9 ECZ Past Paper Solutions",
-    primary: "Grade 7 ECZ Past Paper Solutions"
-  };
-  const titleEl = document.getElementById("heroTitle");
-  if (titleEl) titleEl.textContent = titles[activeLevel] || titles.senior;
-  
-  const resources = getResources().filter(r => r.level === activeLevel);
-  const subjects = [...new Set(resources.map(r => r.subject))];
-  
-  const solEl = document.getElementById("statSolutions");
-  const subjEl = document.getElementById("statSubjects");
-  const yearEl = document.getElementById("statYears");
-
-  if (solEl) solEl.textContent = `${resources.length} solutions`;
-  if (subjEl) subjEl.textContent = `${subjects.length} subjects`;
-  if (yearEl) yearEl.textContent = `2016–2026`;
-}
 
 function getResources() {
   const stored = localStorage.getItem("library_resources");
   return stored ? JSON.parse(stored) : defaultResources;
 }
 
+window.selectGradeLevel = function(level) {
+  activeLevel = level;
+  renderSubjectPills();
+  renderResources();
+  document.getElementById("resources")?.scrollIntoView({ behavior: "smooth" });
+};
+
 function renderSubjectPills() {
   const container = document.getElementById("subjectPillsContainer");
   if (!container) return;
 
-  const resources = getResources().filter(r => r.level === activeLevel);
+  const resources = getResources().filter(r => activeLevel === "all" || r.level === activeLevel);
   const subjectCounts = {};
   resources.forEach(r => {
     subjectCounts[r.subject] = (subjectCounts[r.subject] || 0) + 1;
@@ -104,15 +52,15 @@ window.filterSubject = function(subj) {
   renderResources();
 };
 
-function renderResources() {
+function renderResources(searchQuery = "") {
   const grid = document.getElementById("resourceGrid");
   if (!grid) return;
 
-  const searchVal = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const searchVal = searchQuery.toLowerCase();
   const resources = getResources();
 
   const filtered = resources.filter(res => {
-    const matchesLevel = res.level === activeLevel;
+    const matchesLevel = activeLevel === "all" || res.level === activeLevel;
     const matchesSubject = selectedSubject === "all" || res.subject === selectedSubject;
     const matchesSearch = res.title.toLowerCase().includes(searchVal);
     return matchesLevel && matchesSubject && matchesSearch;
@@ -139,7 +87,6 @@ function renderResources() {
     `;
     grid.appendChild(card);
   });
-  updateHeroBanner();
 }
 
 window.previewPDF = function(url, title) {
@@ -152,3 +99,7 @@ document.getElementById("closeModalBtn")?.addEventListener("click", function() {
   document.getElementById("pdfFrame").src = "";
   document.getElementById("pdfModal").style.display = "none";
 });
+
+window.bookmarkSite = function() {
+  alert("Press Ctrl+D (or Cmd+D on Mac) to bookmark Mathew's SmartStudy Library!");
+};
